@@ -1,0 +1,10 @@
+# Cancer
+
+## Overview
+A disease caused by an uncontrolled division of abnormal cells in a part of the body. Treatments include chemotherapy, radiation, and surgery.
+
+## Diagnosis
+Diagnosis of Cancer typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

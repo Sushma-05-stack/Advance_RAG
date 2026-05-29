@@ -1,0 +1,10 @@
+# Epilepsy
+
+## Overview
+A neurological disorder marked by sudden recurrent episodes of sensory disturbance, loss of consciousness, or convulsions.
+
+## Diagnosis
+Diagnosis of Epilepsy typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

@@ -1,0 +1,10 @@
+# Malaria
+
+## Overview
+An intermittent and remittent fever caused by a protozoan parasite that invades the red blood cells, transmitted by mosquitoes in many tropical and subtropical regions.
+
+## Diagnosis
+Diagnosis of Malaria typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

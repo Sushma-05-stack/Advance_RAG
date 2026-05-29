@@ -1,0 +1,10 @@
+# Asthma
+
+## Overview
+A respiratory condition marked by spasms in the bronchi of the lungs, causing difficulty in breathing. Treatment includes inhaled corticosteroids.
+
+## Diagnosis
+Diagnosis of Asthma typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

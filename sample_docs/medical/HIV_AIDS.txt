@@ -1,0 +1,10 @@
+# HIV/AIDS
+
+## Overview
+A chronic, potentially life-threatening condition caused by the human immunodeficiency virus (HIV), which interferes with the body's ability to fight infections.
+
+## Diagnosis
+Diagnosis of HIV/AIDS typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

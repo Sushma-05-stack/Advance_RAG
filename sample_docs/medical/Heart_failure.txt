@@ -1,0 +1,10 @@
+# Heart failure
+
+## Overview
+Severe failure of the heart to function properly, especially as a cause of death.
+
+## Diagnosis
+Diagnosis of Heart failure typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

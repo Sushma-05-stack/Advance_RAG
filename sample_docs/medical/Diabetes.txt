@@ -1,0 +1,10 @@
+# Diabetes
+
+## Overview
+A metabolic disease in which the body's inability to produce any or enough insulin causes elevated levels of glucose in the blood. Management includes insulin therapy and diet control.
+
+## Diagnosis
+Diagnosis of Diabetes typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

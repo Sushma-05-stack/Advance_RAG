@@ -1,0 +1,10 @@
+# Major depressive disorder
+
+## Overview
+A mental disorder characterized by at least two weeks of pervasive low mood, low self-esteem, and loss of interest.
+
+## Diagnosis
+Diagnosis of Major depressive disorder typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

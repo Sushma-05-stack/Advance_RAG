@@ -1,0 +1,10 @@
+# Rickets
+
+## Overview
+A disease of children caused by vitamin D deficiency, characterized by imperfect calcification, softening, and distortion of the bones typically resulting in bow legs.
+
+## Diagnosis
+Diagnosis of Rickets typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.

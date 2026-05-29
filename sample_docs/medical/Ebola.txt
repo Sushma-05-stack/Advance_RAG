@@ -1,0 +1,10 @@
+# Ebola
+
+## Overview
+An infectious and generally fatal disease marked by fever and severe internal bleeding, spread through contact with infected body fluids.
+
+## Diagnosis
+Diagnosis of Ebola typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+
+## Treatment
+Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
