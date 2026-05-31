@@ -1,8 +1,4 @@
-"""ChromaDB vector store — uses Groq embeddings API (no local model, no compilation).
-
-chromadb>=1.0 has pre-built abi3 wheels (works on Python 3.9-3.14+),
-no tokenizers/Rust dependency.
-"""
+"""ChromaDB vector store — Groq embeddings API, chromadb 0.5.3."""
 import logging
 from typing import List, Optional, Tuple
 
@@ -30,15 +26,10 @@ def _get_client():
     if config.use_chroma_cloud:
         logger.info("Connecting to ChromaDB Cloud tenant=%s db=%s",
                     config.CHROMA_TENANT, config.CHROMA_DATABASE)
-        return chromadb.HttpClient(
-            host="api.trychroma.com",
-            port=443,
-            ssl=True,
-            headers={
-                "x-chroma-token": config.CHROMA_API_KEY,
-                "x-tenant": config.CHROMA_TENANT,
-                "x-database": config.CHROMA_DATABASE,
-            },
+        return chromadb.CloudClient(
+            tenant=config.CHROMA_TENANT,
+            database=config.CHROMA_DATABASE,
+            api_key=config.CHROMA_API_KEY,
         )
     logger.info("Using local ChromaDB at %s", config.CHROMA_PERSIST_DIR)
     return chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
