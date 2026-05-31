@@ -1,4 +1,8 @@
-"""Configuration for Document-Only Advanced RAG."""
+"""Configuration for Document-Only Advanced RAG.
+
+All values are read lazily from os.environ so Streamlit secrets
+injected before load_components() are always picked up.
+"""
 import os
 from dotenv import load_dotenv
 
@@ -6,50 +10,146 @@ load_dotenv()
 
 
 def _bool(name: str, default: bool = False) -> bool:
-    return os.getenv(name, str(default)).lower() in ("1", "true", "yes", "on")
+    return os.environ.get(name, str(default)).lower() in ("1", "true", "yes", "on")
+
+
+def _int(name: str, default: int) -> int:
+    return int(os.environ.get(name, str(default)))
+
+
+def _float(name: str, default: float) -> float:
+    return float(os.environ.get(name, str(default)))
 
 
 class Config:
-    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "groq").lower()
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    GROQ_BASE_URL: str = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
-    MISTRAL_API_KEY: str = os.getenv("MISTRAL_API_KEY", "")
-    MISTRAL_BASE_URL: str = os.getenv("MISTRAL_BASE_URL", "https://api.mistral.ai/v1")
-    LLM_BASE_URL: str = os.getenv("LLM_BASE_URL", "")
-    LLM_MODEL: str = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
+    """Reads every value fresh from os.environ each time it is accessed."""
 
-    LANGCHAIN_TRACING_V2: str = os.getenv("LANGCHAIN_TRACING_V2", "false")
-    LANGCHAIN_API_KEY: str = os.getenv("LANGCHAIN_API_KEY", "") or os.getenv("LANGSMITH_API_KEY", "")
-    LANGCHAIN_PROJECT: str = os.getenv("LANGCHAIN_PROJECT", "") or os.getenv("LANGSMITH_PROJECT", "document-rag")
-    LANGCHAIN_ENDPOINT: str = os.getenv("LANGCHAIN_ENDPOINT", "") or os.getenv(
-        "LANGSMITH_ENDPOINT", "https://api.smith.langchain.com"
-    )
+    # ── LLM ──────────────────────────────────────────────────────────────────
+    @property
+    def LLM_PROVIDER(self) -> str:
+        return os.environ.get("LLM_PROVIDER", "groq").lower()
 
-    CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "./chroma_db")
-    CHROMA_COLLECTION_NAME: str = os.getenv("CHROMA_COLLECTION_NAME", "rag_documents")
-    CHROMA_API_KEY: str = os.getenv("CHROMA_API_KEY", "")
-    CHROMA_TENANT: str = os.getenv("CHROMA_TENANT", "")
-    CHROMA_DATABASE: str = os.getenv("CHROMA_DATABASE", "")
+    @property
+    def GROQ_API_KEY(self) -> str:
+        return os.environ.get("GROQ_API_KEY", "")
 
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
-    LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.0"))
+    @property
+    def GROQ_BASE_URL(self) -> str:
+        return os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 
-    CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1000"))
-    CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "200"))
-    TOP_K_RESULTS: int = int(os.getenv("TOP_K_RESULTS", "5"))
-    RETRIEVAL_CANDIDATE_K: int = int(os.getenv("RETRIEVAL_CANDIDATE_K", "20"))
+    @property
+    def OPENAI_API_KEY(self) -> str:
+        return os.environ.get("OPENAI_API_KEY", "")
 
-    ENABLE_QUERY_OPTIMIZATION: bool = _bool("ENABLE_QUERY_OPTIMIZATION", True)
-    ENABLE_QUERY_REWRITE: bool = _bool("ENABLE_QUERY_REWRITE", True)
-    ENABLE_MULTI_QUERY: bool = _bool("ENABLE_MULTI_QUERY", True)
-    MULTI_QUERY_COUNT: int = int(os.getenv("MULTI_QUERY_COUNT", "3"))
-    ENABLE_HYBRID_SEARCH: bool = _bool("ENABLE_HYBRID_SEARCH", True)
-    ENABLE_RERANKING: bool = _bool("ENABLE_RERANKING", True)
-    RERANKER_MODEL: str = os.getenv("RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+    @property
+    def LLM_MODEL(self) -> str:
+        return os.environ.get("LLM_MODEL", "llama-3.3-70b-versatile")
+
+    @property
+    def LLM_TEMPERATURE(self) -> float:
+        return _float("LLM_TEMPERATURE", 0.0)
+
+    @property
+    def LLM_BASE_URL(self) -> str:
+        return os.environ.get("LLM_BASE_URL", "")
+
+    # ── LangSmith ─────────────────────────────────────────────────────────────
+    @property
+    def LANGCHAIN_API_KEY(self) -> str:
+        return os.environ.get("LANGCHAIN_API_KEY", "") or os.environ.get("LANGSMITH_API_KEY", "")
+
+    @property
+    def LANGCHAIN_PROJECT(self) -> str:
+        return os.environ.get("LANGCHAIN_PROJECT", "") or os.environ.get("LANGSMITH_PROJECT", "document-rag")
+
+    @property
+    def LANGCHAIN_ENDPOINT(self) -> str:
+        return os.environ.get("LANGCHAIN_ENDPOINT", "") or os.environ.get(
+            "LANGSMITH_ENDPOINT", "https://api.smith.langchain.com"
+        )
+
+    # ── ChromaDB ──────────────────────────────────────────────────────────────
+    @property
+    def CHROMA_PERSIST_DIR(self) -> str:
+        return os.environ.get("CHROMA_PERSIST_DIR", "./chroma_db")
+
+    @property
+    def CHROMA_COLLECTION_NAME(self) -> str:
+        return os.environ.get("CHROMA_COLLECTION_NAME", "rag_documents")
+
+    @property
+    def CHROMA_API_KEY(self) -> str:
+        return os.environ.get("CHROMA_API_KEY", "")
+
+    @property
+    def CHROMA_TENANT(self) -> str:
+        return os.environ.get("CHROMA_TENANT", "")
+
+    @property
+    def CHROMA_DATABASE(self) -> str:
+        return os.environ.get("CHROMA_DATABASE", "")
+
+    # ── Chunking & retrieval ──────────────────────────────────────────────────
+    @property
+    def EMBEDDING_MODEL(self) -> str:
+        return os.environ.get("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+
+    @property
+    def CHUNK_SIZE(self) -> int:
+        return _int("CHUNK_SIZE", 1000)
+
+    @property
+    def CHUNK_OVERLAP(self) -> int:
+        return _int("CHUNK_OVERLAP", 200)
+
+    @property
+    def TOP_K_RESULTS(self) -> int:
+        return _int("TOP_K_RESULTS", 5)
+
+    @property
+    def RETRIEVAL_CANDIDATE_K(self) -> int:
+        return _int("RETRIEVAL_CANDIDATE_K", 20)
+
+    @property
+    def MULTI_QUERY_COUNT(self) -> int:
+        return _int("MULTI_QUERY_COUNT", 3)
+
+    # ── Feature flags ─────────────────────────────────────────────────────────
+    @property
+    def ENABLE_QUERY_OPTIMIZATION(self) -> bool:
+        return _bool("ENABLE_QUERY_OPTIMIZATION", True)
+
+    @ENABLE_QUERY_OPTIMIZATION.setter
+    def ENABLE_QUERY_OPTIMIZATION(self, value: bool):
+        os.environ["ENABLE_QUERY_OPTIMIZATION"] = str(value)
+
+    @property
+    def ENABLE_QUERY_REWRITE(self) -> bool:
+        return _bool("ENABLE_QUERY_REWRITE", True)
+
+    @property
+    def ENABLE_MULTI_QUERY(self) -> bool:
+        return _bool("ENABLE_MULTI_QUERY", True)
+
+    @property
+    def ENABLE_HYBRID_SEARCH(self) -> bool:
+        return _bool("ENABLE_HYBRID_SEARCH", True)
+
+    @ENABLE_HYBRID_SEARCH.setter
+    def ENABLE_HYBRID_SEARCH(self, value: bool):
+        os.environ["ENABLE_HYBRID_SEARCH"] = str(value)
+
+    @property
+    def ENABLE_RERANKING(self) -> bool:
+        return _bool("ENABLE_RERANKING", True)
+
+    @ENABLE_RERANKING.setter
+    def ENABLE_RERANKING(self, value: bool):
+        os.environ["ENABLE_RERANKING"] = str(value)
 
     SUPPORTED_EXTENSIONS: list = [".pdf", ".txt", ".docx", ".md"]
 
+    # ── Derived ───────────────────────────────────────────────────────────────
     @property
     def use_chroma_cloud(self) -> bool:
         return bool(self.CHROMA_API_KEY and self.CHROMA_TENANT and self.CHROMA_DATABASE)
@@ -58,13 +158,9 @@ class Config:
     def llm_api_key(self) -> str:
         if self.LLM_PROVIDER == "openai":
             return self.OPENAI_API_KEY
-        if self.LLM_PROVIDER == "mistral":
-            return self.MISTRAL_API_KEY
         if self.GROQ_API_KEY:
             return self.GROQ_API_KEY
-        if self.OPENAI_API_KEY.startswith("gsk_"):
-            return self.OPENAI_API_KEY
-        return self.GROQ_API_KEY
+        return ""
 
     @property
     def llm_base_url(self):
@@ -72,27 +168,19 @@ class Config:
             return self.LLM_BASE_URL
         if self.LLM_PROVIDER == "groq":
             return self.GROQ_BASE_URL
-        if self.LLM_PROVIDER == "mistral":
-            return self.MISTRAL_BASE_URL
         return None
 
-    @property
-    def llm_display_name(self) -> str:
-        names = {"groq": "Groq LLM", "mistral": "Mistral AI", "openai": "OpenAI"}
-        return names.get(self.LLM_PROVIDER, "LLM")
-
     def setup_langsmith(self):
+        api_key = self.LANGCHAIN_API_KEY
         tracing = (
             _bool("LANGCHAIN_TRACING_V2", False)
             or _bool("LANGSMITH_TRACING", False)
         )
-        api_key = self.LANGCHAIN_API_KEY
         if tracing and api_key:
             os.environ["LANGCHAIN_TRACING_V2"] = "true"
             os.environ["LANGCHAIN_API_KEY"] = api_key
             os.environ["LANGCHAIN_PROJECT"] = self.LANGCHAIN_PROJECT.strip('"')
             os.environ["LANGCHAIN_ENDPOINT"] = self.LANGCHAIN_ENDPOINT
-            # LangSmith SDK also reads these aliases
             os.environ["LANGSMITH_API_KEY"] = api_key
             os.environ["LANGSMITH_PROJECT"] = self.LANGCHAIN_PROJECT.strip('"')
             os.environ["LANGSMITH_TRACING"] = "true"
@@ -100,9 +188,8 @@ class Config:
     def validate(self):
         if not self.llm_api_key:
             raise ValueError(
-                "LLM API key missing. Set GROQ_API_KEY, MISTRAL_API_KEY, or OPENAI_API_KEY in .env"
+                "LLM API key missing. Set GROQ_API_KEY in secrets or .env"
             )
 
 
 config = Config()
-config.setup_langsmith()
