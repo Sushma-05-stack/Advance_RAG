@@ -4,8 +4,6 @@ Run locally:  streamlit run streamlit_app.py
 Deploy:       Push to GitHub → connect to share.streamlit.io
 """
 import os
-import tempfile
-import shutil
 from pathlib import Path
 
 import streamlit as st
@@ -124,20 +122,14 @@ with st.sidebar:
                 total_chunks = 0
 
                 for i, uf in enumerate(uploaded_files):
-                    suffix = Path(uf.name).suffix.lower()
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-                        shutil.copyfileobj(uf, tmp)
-                        tmp_path = tmp.name
-
                     try:
-                        chunks = processor.process(tmp_path)
-                        for chunk in chunks:
-                            chunk.metadata["source_file"] = uf.name
+                        file_bytes = uf.read()
+                        chunks = processor.process_upload(uf.name, file_bytes)
                         ids = vsm.add_documents(chunks)
                         total_chunks += len(ids)
                         st.toast(f"✅ {uf.name} → {len(ids)} chunks")
-                    finally:
-                        os.unlink(tmp_path)
+                    except Exception as upload_err:
+                        st.error(f"Failed to process {uf.name}: {upload_err}")
 
                     progress.progress(
                         (i + 1) / len(uploaded_files),

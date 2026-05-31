@@ -1,16 +1,13 @@
-# Environment variables — NEVER commit these
+# Secrets — NEVER commit
 .env
 *.env
 .env.local
-.env.*.local
-
-# Streamlit secrets — NEVER commit
 .streamlit/secrets.toml
 
-# ChromaDB local vector store
+# ChromaDB local store
 chroma_db/
 
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
@@ -41,6 +38,6 @@ Thumbs.db
 # Logs
 *.log
 
-# Temp uploads
+# Temp
 tmp/
 temp/
