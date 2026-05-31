@@ -1,587 +1,294 @@
 """
-Document-Only Advanced RAG — Streamlit UI
-Run:  streamlit run streamlit_app.py
+Streamlit UI for the Advanced RAG system.
+Run locally:  streamlit run streamlit_app.py
+Deploy:       Push to GitHub → connect to share.streamlit.io
 """
-from __future__ import annotations
-
-import time
-from datetime import datetime
-from typing import List, Optional
+import os
+import tempfile
+import shutil
+from pathlib import Path
 
 import streamlit as st
 
-from config import config
-from document_processor import DocumentProcessor
-from rag_chain import DocumentRAGChain
-from retrieval import RetrievalDebugInfo
-from vector_store import VectorStoreManager
-from evaluation import RAGEvaluator
-
-# ─── page config ─────────────────────────────────────────────────────────────
+# ── Page config (must be first Streamlit call) ──────────────────────────────
 st.set_page_config(
-    page_title="Document-Only RAG System",
-    page_icon="📄",
+    page_title="Advanced RAG — Document Q&A",
+    page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─── CSS ─────────────────────────────────────────────────────────────────────
-st.markdown(
-    """
-    <style>
-    body { background: #000000; color: #ffffff; }
-    [data-testid="stAppViewContainer"] { background: #000000 !important; }
-    .main-title  { font-size:2.1rem; font-weight:800; color:#dbeafe; margin:0; }
-    .sub-title   { color:#93c5fd; font-size:1rem; margin-bottom:1.2rem; }
-    .status-ok   { color:#34d399; font-weight:700; }
-    .status-warn { color:#fbbf24; font-weight:700; }
-    .badge {
-        display:inline-block; padding:2px 10px; border-radius:12px;
-        font-size:.82rem; font-weight:600;
+# ── Lazy imports (avoid crashing before secrets are set) ────────────────────
+@st.cache_resource(show_spinner="Loading models & vector store…")
+def load_components():
+    from config import config
+    from document_processor import DocumentProcessor
+    from vector_store import VectorStoreManager
+    from rag_chain import AdvancedRAGChain
+
+    config.validate()
+    processor = DocumentProcessor()
+    vsm = VectorStoreManager()
+    rag = AdvancedRAGChain(vsm)
+    return processor, vsm, rag
+
+
+# ── Inject secrets from Streamlit Cloud into env vars ───────────────────────
+if "OPENAI_API_KEY" in st.secrets:
+    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+
+# ── Custom CSS ───────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+    .answer-box {
+        background: #f0f7ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 6px;
+        padding: 1rem 1.2rem;
+        margin: 0.5rem 0 1rem 0;
+        font-size: 1rem;
+        line-height: 1.6;
     }
-    .badge-green { background:#052e16; color:#6ee7b7; border:1px solid #0f5132; }
-    .badge-amber { background:#3b2f00; color:#fbbf24; border:1px solid #b45309; }
-    .badge-blue  { background:#1e3a8a; color:#bfdbfe; border:1px solid #1d4ed8; }
-    .hist-q { font-weight:700; color:#dbeafe; margin-bottom:.2rem; }
-    .hist-a { background:#050505; border-left:4px solid #2563eb;
-              padding:.6rem .9rem; border-radius:4px; margin-bottom:.4rem; }
-    .arch-step {
-        display:flex; align-items:center; gap:.7rem;
-        background:#0b0b0b; border:1px solid #2a2a2a;
-        border-radius:8px; padding:.55rem .9rem; margin:.35rem 0;
-        font-size:.95rem;
-        color:#ffffff;
+    .source-chip {
+        display: inline-block;
+        background: #e0e7ff;
+        color: #3730a3;
+        border-radius: 12px;
+        padding: 2px 10px;
+        font-size: 0.8rem;
+        margin: 2px 4px 2px 0;
     }
-    .arch-arrow { color:#6b7a8d; font-size:1.1rem; text-align:center; }
-    .metric-card {
-        background:linear-gradient(135deg,#070707,#0f0f0f);
-        border:1px solid #2a2a2a; border-radius:10px;
-        padding:.85rem 1rem; margin-bottom:.5rem;
-        font-size:.9rem;
+    .score-good  { color: #16a34a; font-weight: 600; }
+    .score-ok    { color: #d97706; font-weight: 600; }
+    .score-low   { color: #dc2626; font-weight: 600; }
+    .stat-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        text-align: center;
     }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ─── session defaults ─────────────────────────────────────────────────────────
-_DEFAULTS: dict = {
-    "uploaded_files": [],
-    "db_ready": False,
-    "vsm": None,
-    "rag": None,
-    "last_updated": None,
-    "last_debug": None,
-    "indexed_doc_names": [],
-    "chat_history": [],          # list of {question, answer, sources, queries, mode}
-    "pending_question": "",      # carries question across rerun
-}
-
-for _k, _v in _DEFAULTS.items():
-    if _k not in st.session_state:
-        st.session_state[_k] = _v
+</style>
+""", unsafe_allow_html=True)
 
 
-# ─── helpers ──────────────────────────────────────────────────────────────────
-@st.cache_resource
-def get_vector_store() -> VectorStoreManager:
-    return VectorStoreManager()
+# ── Header ───────────────────────────────────────────────────────────────────
+st.title("🔍 Advanced RAG — Document Q&A")
+st.caption("Answers come **only** from your uploaded documents. Powered by ChromaDB + OpenAI.")
 
+# ── Sidebar ──────────────────────────────────────────────────────────────────
+with st.sidebar:
+    st.header("⚙️ Settings")
 
-def refresh_stats() -> int:
-    vsm = st.session_state.vsm or get_vector_store()
-    st.session_state.vsm = vsm
-    count = vsm.get_document_count()
-    st.session_state.db_ready = count > 0
-    return count
-
-
-def build_database(chunk_size: int, chunk_overlap: int, bar, txt):
-    vsm = get_vector_store()
-    processor = DocumentProcessor(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    files = st.session_state.uploaded_files
-    if not files:
-        raise ValueError("No files selected.")
-
-    vsm.clear()
-    all_chunks, doc_names = [], []
-    total = len(files)
-
-    for i, uf in enumerate(files):
-        txt.text(f"Reading {uf.name}  ({i + 1}/{total})")
-        bar.progress(int(i / total * 80))
-        chunks = processor.process_upload(uf.name, uf.getvalue())
-        all_chunks.extend(chunks)
-        doc_names.append(uf.name)
-
-    txt.text(f"Embedding {len(all_chunks)} chunks into ChromaDB …")
-    bar.progress(85)
-    batch = 50
-    for start in range(0, len(all_chunks), batch):
-        vsm.add_documents(all_chunks[start : start + batch])
-        pct = 85 + int(min(1.0, (start + batch) / len(all_chunks)) * 15)
-        bar.progress(pct)
-
-    bar.progress(100)
-    txt.text("Done!")
-    st.session_state.vsm = vsm
-    st.session_state.rag = DocumentRAGChain(vsm)
-    st.session_state.db_ready = True
-    st.session_state.indexed_doc_names = doc_names
-    st.session_state.last_updated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return len(all_chunks), len(doc_names)
-
-
-def clear_database():
-    vsm = st.session_state.vsm or get_vector_store()
-    vsm.clear()
-    get_vector_store.clear()
-    st.session_state.vsm = get_vector_store()
-    st.session_state.rag = None
-    st.session_state.db_ready = False
-    st.session_state.indexed_doc_names = []
-    st.session_state.chat_history = []
-    st.session_state.last_debug = None
-    st.session_state.pending_question = ""
-
-
-def run_query(question: str, top_k: int) -> Optional[dict]:
-    try:
-        config.validate()
-        vsm = st.session_state.vsm or get_vector_store()
-        if st.session_state.rag is None:
-            st.session_state.rag = DocumentRAGChain(vsm)
-
-        debug = RetrievalDebugInfo()
-        with st.spinner("Searching and generating answer …"):
-            result = st.session_state.rag.query(
-                question=question,
-                k=top_k,
-                use_optimization=st.session_state.get("opt_query", True),
-                use_hybrid=st.session_state.get("opt_hybrid", True),
-                use_rerank=st.session_state.get("opt_rerank", True),
-                debug=debug,
-            )
-        st.session_state.last_debug = debug
-        return result
-    except Exception as exc:
-        msg = str(exc)
-        st.error(f"Error: {exc}")
-
-        # Common case: LangSmith auth / 401 invalid API key
-        if ("401" in msg) or ("invalid_api_key" in msg) or ("Invalid API Key" in msg):
-            with st.expander("Fix authentication (one click)"):
-                st.warning("This looks like an authentication issue (often LangSmith tracing).")
-                if st.button("Disable LangSmith tracing and retry", type="primary"):
-                    import os
-
-                    os.environ["LANGSMITH_TRACING"] = "false"
-                    os.environ["LANGCHAIN_TRACING_V2"] = "false"
-                    st.session_state.last_debug = None
-                    st.rerun()
-        return None
-
-
-# ─── sidebar ──────────────────────────────────────────────────────────────────
-def render_sidebar() -> int:
-    with st.sidebar:
-        st.markdown("## 📄 Document RAG")
-        st.caption("Upload documents, build the index, then ask questions.")
-        st.divider()
-
-        # Upload
-        st.markdown("### 📁 Upload Documents")
-        uploaded = st.file_uploader(
-            "PDF · DOCX · TXT · MD",
-            type=["pdf", "docx", "txt", "md"],
-            accept_multiple_files=True,
-            label_visibility="collapsed",
+    # API key input (for local use; on Streamlit Cloud use secrets)
+    if not os.environ.get("OPENAI_API_KEY"):
+        api_key = st.text_input(
+            "OpenAI API Key",
+            type="password",
+            placeholder="sk-...",
+            help="Enter your OpenAI API key. It is not stored anywhere.",
         )
-        if uploaded:
-            st.session_state.uploaded_files = uploaded
-            st.success(f"{len(uploaded)} file(s) ready")
+        if api_key:
+            os.environ["OPENAI_API_KEY"] = api_key
+    else:
+        st.success("✅ API key loaded")
 
-        st.divider()
+    st.divider()
 
-        # DB controls
-        st.markdown("### 🗄️ Database Controls")
-        chunk_size    = st.number_input("Chunk Size",    200, 4000, config.CHUNK_SIZE,    100)
-        chunk_overlap = st.number_input("Chunk Overlap",   0, 1000, config.CHUNK_OVERLAP,  50)
+    top_k = st.slider("Chunks to retrieve (k)", min_value=1, max_value=15, value=5)
+    rewrite = st.toggle("Query rewriting", value=True,
+                        help="Rewrites your question into a better search query")
 
-        c1, c2 = st.columns(2)
-        build_btn = c1.button("🔨 Build DB", use_container_width=True, type="primary")
-        clear_btn = c2.button("🗑️ Clear",    use_container_width=True)
-
-        if build_btn:
-            if not st.session_state.uploaded_files:
-                st.error("Select at least one file first.")
-            else:
-                bar = st.progress(0)
-                txt = st.empty()
-                try:
-                    config.validate()
-                    n_chunks, n_docs = build_database(chunk_size, chunk_overlap, bar, txt)
-                    st.success(f"Indexed {n_docs} doc(s) → {n_chunks} chunks")
-                    time.sleep(0.4)
-                    st.rerun()
-                except Exception as exc:
-                    st.error(str(exc))
-
-        if clear_btn:
-            clear_database()
-            st.warning("Database cleared.")
-            st.rerun()
-
-        chunk_count = refresh_stats()
-        doc_count = len(st.session_state.indexed_doc_names) or len(
-            (st.session_state.vsm or get_vector_store()).list_sources()
-        )
-        st.markdown(
-            f'<div class="metric-card">'
-            f"<b>Documents indexed:</b> {doc_count}<br>"
-            f"<b>Total chunks:</b> {chunk_count}"
-            f"</div>",
-            unsafe_allow_html=True,
-        )
-
-        st.divider()
-
-        # Retrieval settings
-        st.markdown("### ⚙️ Retrieval Settings")
-        top_k = st.slider("Top-K Results", 1, 20, config.TOP_K_RESULTS, key="top_k_slider")
-        st.checkbox("Query optimization",      value=config.ENABLE_QUERY_OPTIMIZATION, key="opt_query")
-        st.checkbox("Hybrid search (BM25 + Vector)", value=config.ENABLE_HYBRID_SEARCH, key="opt_hybrid")
-        st.checkbox("Re-ranking (Cross-Encoder)",    value=config.ENABLE_RERANKING,     key="opt_rerank")
-
-        st.divider()
-
-        # Status
-        st.markdown("### 📊 System Status")
-        up_ok = bool(st.session_state.uploaded_files)
-        db_ok = st.session_state.db_ready
-        st.markdown(
-            f"Documents uploaded: {'✅' if up_ok else '❌'}  \n"
-            f"Database ready: {'✅' if db_ok else '❌'}  \n"
-            f"LLM: `{config.LLM_PROVIDER}` / `{config.LLM_MODEL}`  \n"
-            f"ChromaDB: {'☁️ Cloud' if config.use_chroma_cloud else '💾 Local'}  \n"
-            f"Last updated: {st.session_state.last_updated or '—'}"
-        )
-
-    return top_k
-
-
-# ─── TAB 1 — Chat ─────────────────────────────────────────────────────────────
-def tab_chat(top_k: int):
-    st.markdown('<p class="main-title">📄 Document-Only RAG System</p>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="sub-title">Answers are generated strictly from your uploaded documents '
-        "via ChromaDB similarity search + BM25 hybrid retrieval + re-ranking.</p>",
-        unsafe_allow_html=True,
+    st.divider()
+    st.header("📄 Upload Documents")
+    uploaded_files = st.file_uploader(
+        "PDF, TXT, DOCX, or MD",
+        type=["pdf", "txt", "docx", "md"],
+        accept_multiple_files=True,
     )
 
-    # Status banner
-    if st.session_state.db_ready:
-        st.success("✅ Documents indexed — ready to answer questions.")
-    else:
-        st.warning("⚠️ Upload documents and click **Build DB** in the sidebar before asking questions.")
-
-    # ── input form (avoids button-disable/Enter-key quirk) ──
-    with st.form("question_form", clear_on_submit=True):
-        question = st.text_input(
-            "Ask about your documents …",
-            placeholder="e.g. What is the refund policy?",
-            key="question_field",
-        )
-        submitted = st.form_submit_button(
-            "🔍 Search & Answer",
-            type="primary",
-            use_container_width=True,
-        )
-
-    # guard: must have DB
-    if submitted and question.strip():
-        if not st.session_state.db_ready:
-            st.error("Please build the vector database first (sidebar → Build DB).")
+    if uploaded_files and st.button("📥 Ingest Documents", use_container_width=True):
+        if not os.environ.get("OPENAI_API_KEY"):
+            st.error("Please enter your OpenAI API key first.")
         else:
-            result = run_query(question.strip(), top_k)
-            if result and "error" not in result:
-                st.session_state.chat_history.insert(0, {
-                    "question": question.strip(),
-                    "answer":   result.get("answer", ""),
-                    "sources":  result.get("sources", []),
-                    "queries":  result.get("search_queries", []),
-                    "mode":     result.get("retrieval_mode", ""),
-                })
+            try:
+                processor, vsm, rag = load_components()
+                progress = st.progress(0, text="Ingesting…")
+                total_chunks = 0
 
-    # ── chat history ──
-    history: list = st.session_state.chat_history
-    if not history:
-        if st.session_state.db_ready:
-            st.info("Type a question above and press **Search & Answer**.")
-        return
+                for i, uf in enumerate(uploaded_files):
+                    suffix = Path(uf.name).suffix.lower()
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                        shutil.copyfileobj(uf, tmp)
+                        tmp_path = tmp.name
 
-    st.markdown("---")
-    st.markdown(f"#### 💬 Conversation History  ({len(history)} turn{'s' if len(history)!=1 else ''})")
+                    try:
+                        chunks = processor.process(tmp_path)
+                        for chunk in chunks:
+                            chunk.metadata["source_file"] = uf.name
+                        ids = vsm.add_documents(chunks)
+                        total_chunks += len(ids)
+                        st.toast(f"✅ {uf.name} → {len(ids)} chunks")
+                    finally:
+                        os.unlink(tmp_path)
 
-    for idx, turn in enumerate(history):
-        with st.container(border=True):
-            # question row
-            col_q, col_badge = st.columns([8, 2])
-            col_q.markdown(f"**Q{len(history)-idx}:** {turn['question']}")
-            col_badge.markdown(
-                f'<span class="badge badge-blue">{turn["mode"] or "search"}</span>',
+                    progress.progress((i + 1) / len(uploaded_files),
+                                      text=f"Processed {i+1}/{len(uploaded_files)} files")
+
+                progress.empty()
+                st.success(f"Ingested {len(uploaded_files)} file(s) → {total_chunks} chunks total")
+                st.rerun()
+
+            except Exception as e:
+                st.error(f"Ingestion failed: {e}")
+
+    st.divider()
+
+    # Document management
+    if os.environ.get("OPENAI_API_KEY"):
+        try:
+            _, vsm, _ = load_components()
+            sources = vsm.list_sources()
+            total_chunks = vsm.get_document_count()
+
+            if sources:
+                st.header("📚 Ingested Documents")
+                st.caption(f"{total_chunks} total chunks")
+                for src in sources:
+                    col1, col2 = st.columns([4, 1])
+                    col1.markdown(f"📄 `{src}`")
+                    if col2.button("🗑️", key=f"del_{src}", help=f"Delete {src}"):
+                        vsm.delete_by_source(src)
+                        st.toast(f"Deleted {src}")
+                        st.rerun()
+
+                st.divider()
+                if st.button("🔴 Reset All", use_container_width=True,
+                             help="Delete everything from the vector store"):
+                    vsm.delete_collection()
+                    st.toast("Vector store cleared")
+                    st.rerun()
+        except Exception:
+            pass
+
+
+# ── Main area ────────────────────────────────────────────────────────────────
+
+# Check prerequisites
+if not os.environ.get("OPENAI_API_KEY"):
+    st.info("👈 Enter your OpenAI API key in the sidebar to get started.")
+    st.stop()
+
+try:
+    processor, vsm, rag = load_components()
+except Exception as e:
+    st.error(f"Initialization error: {e}")
+    st.stop()
+
+doc_count = vsm.get_document_count()
+
+# Stats row
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown(f'<div class="stat-card">📦 <b>{doc_count}</b><br><small>Chunks stored</small></div>',
+                unsafe_allow_html=True)
+with col2:
+    sources = vsm.list_sources()
+    st.markdown(f'<div class="stat-card">📄 <b>{len(sources)}</b><br><small>Documents</small></div>',
+                unsafe_allow_html=True)
+with col3:
+    st.markdown(f'<div class="stat-card">🔍 <b>{top_k}</b><br><small>Chunks per query</small></div>',
+                unsafe_allow_html=True)
+
+st.divider()
+
+# No documents warning
+if doc_count == 0:
+    st.warning("⚠️ No documents ingested yet. Upload files using the sidebar.")
+    st.stop()
+
+# Source filter
+filter_source = None
+if sources:
+    filter_options = ["All documents"] + sources
+    selected = st.selectbox("🔎 Search within", filter_options, index=0)
+    if selected != "All documents":
+        filter_source = selected
+
+# Question input
+question = st.text_input(
+    "💬 Ask a question about your documents",
+    placeholder="e.g. What is the refund policy?",
+)
+
+ask_col, clear_col = st.columns([5, 1])
+ask_btn = ask_col.button("🚀 Ask", use_container_width=True, type="primary")
+clear_btn = clear_col.button("🗑️ Clear", use_container_width=True)
+
+if clear_btn:
+    st.session_state.pop("history", None)
+    st.rerun()
+
+# ── Query & Answer ────────────────────────────────────────────────────────────
+if ask_btn and question.strip():
+    with st.spinner("Searching documents and generating answer…"):
+        result = rag.query(
+            question=question,
+            k=top_k,
+            filter_source=filter_source,
+            rewrite_query=rewrite,
+        )
+
+    # Store in session history
+    if "history" not in st.session_state:
+        st.session_state.history = []
+    st.session_state.history.insert(0, result)
+
+elif ask_btn and not question.strip():
+    st.warning("Please enter a question.")
+
+# ── Display history ───────────────────────────────────────────────────────────
+if "history" in st.session_state and st.session_state.history:
+    for idx, result in enumerate(st.session_state.history):
+        with st.container():
+            st.markdown(f"**❓ {result['question']}**")
+
+            if rewrite and result.get("rewritten_query") != result["question"]:
+                st.caption(f"🔄 Search query: *{result['rewritten_query']}*")
+
+            # Answer box
+            st.markdown(
+                f'<div class="answer-box">{result["answer"]}</div>',
                 unsafe_allow_html=True,
             )
 
-            # answer
-            st.markdown(turn["answer"])
+            # Sources expander
+            if result.get("sources"):
+                with st.expander(
+                    f"📚 {result['num_chunks_retrieved']} source chunk(s) retrieved", expanded=False
+                ):
+                    for src in result["sources"]:
+                        score = src["relevance_score"]
+                        # Lower distance = better match in ChromaDB
+                        if score < 0.5:
+                            score_class = "score-good"
+                            score_label = "High relevance"
+                        elif score < 1.0:
+                            score_class = "score-ok"
+                            score_label = "Medium relevance"
+                        else:
+                            score_class = "score-low"
+                            score_label = "Low relevance"
 
-            # sources
-            if turn.get("sources"):
-                with st.expander(f"📚 Sources ({len(turn['sources'])})"):
-                    for s in turn["sources"]:
-                        pg = f" · page {s['page']}" if s.get("page") else ""
+                        page_info = f" · page {src['page']}" if src.get("page") else ""
                         st.markdown(
-                            f"- **{s['source_file']}**{pg} — "
-                            f"chunk `{s.get('chunk_id','—')}` "
-                            f"(score `{s.get('relevance_score','—')}`)"
+                            f"**[{src['excerpt_id']}]** "
+                            f'<span class="source-chip">{src["source_file"]}{page_info}</span> '
+                            f'<span class="{score_class}">score: {score} ({score_label})</span>',
+                            unsafe_allow_html=True,
                         )
-                        st.caption(s.get("preview", "")[:180] + "…")
+                        st.caption(src["preview"])
+                        st.divider()
 
-            # expanded queries
-            if turn.get("queries") and len(turn["queries"]) > 1:
-                with st.expander("🔍 Optimised search queries"):
-                    for q in turn["queries"]:
-                        st.code(q, language="")
-
-    if st.button("🗑️ Clear chat history", key="clear_hist"):
-        st.session_state.chat_history = []
-        st.rerun()
-
-
-# ─── TAB 2 — Sources ──────────────────────────────────────────────────────────
-def tab_sources():
-    st.markdown("### 📂 Indexed Document Sources")
-    vsm   = st.session_state.vsm or get_vector_store()
-    srcs  = vsm.list_sources()
-    metas = vsm.get_all_metadata()
-
-    if not srcs:
-        st.warning("No documents indexed yet. Upload files and click **Build DB**.")
-        return
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Documents", len(srcs))
-    c2.metric("Total chunks", vsm.get_document_count())
-    pages = {(m.get("source_file"), m.get("page")) for m in metas if m.get("page") is not None}
-    c3.metric("Pages indexed", len(pages))
-
-    st.markdown("#### Files")
-    for s in srcs:
-        st.markdown(f"- `{s}`")
-
-    with st.expander("Chunk metadata table", expanded=False):
-        st.dataframe(
-            [
-                {
-                    "source":   m.get("source_file"),
-                    "page":     m.get("page"),
-                    "chunk_id": m.get("chunk_id", m.get("chunk_index")),
-                    "preview":  (m.get("preview") or "")[:80],
-                }
-                for m in metas
-            ],
-            use_container_width=True,
-        )
-
-
-# ─── TAB 3 — Retrieval Debug ──────────────────────────────────────────────────
-def tab_debug():
-    st.markdown("### 🔬 Retrieval Debug")
-    debug: Optional[RetrievalDebugInfo] = st.session_state.last_debug
-
-    if not debug or not debug.chunks:
-        st.info("Run a query in the **Chat** tab to see retrieval details here.")
-        return
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Retrieval time (ms)", f"{debug.retrieval_time_ms:.1f}")
-    c2.metric("Top-K returned",      debug.top_k)
-    c3.metric("Queries generated",   len(debug.search_queries))
-
-    st.caption(f"Mode: **{debug.mode}**")
-
-    if debug.search_queries:
-        st.markdown("**Search queries used:**")
-        for i, q in enumerate(debug.search_queries, 1):
-            st.code(f"{i}. {q}", language="")
-
-    st.markdown(f"#### Retrieved Chunks  ({len(debug.chunks)})")
-    for i, c in enumerate(debug.chunks, 1):
-        label = (
-            f"#{i}  {c['source_file']}"
-            + (f" · page {c['page']}" if c.get("page") is not None else "")
-            + f"  |  score {c['similarity_score']}  |  {c.get('chunk_id','')}"
-        )
-        with st.expander(label):
-            st.write(c["content"])
-            st.json(c.get("metadata", {}))
-
-
-# ─── TAB 4 — Architecture ─────────────────────────────────────────────────────
-def tab_architecture():
-    st.markdown("### 🏗️ System Architecture (Flowchart)")
-
-    llm_label = f"LLM ({config.llm_display_name})"
-    search_label = (
-        "Hybrid Search (ChromaDB + BM25)"
-        if config.ENABLE_HYBRID_SEARCH
-        else "Similarity Search (ChromaDB)"
-    )
-    rerank_label = (
-        "Re-ranking (Cross-Encoder)" if config.ENABLE_RERANKING else "Re-ranking (disabled)"
-    )
-    opt_label = (
-        "Query Optimization (Rewrite + Multi-Query)"
-        if config.ENABLE_QUERY_OPTIMIZATION
-        else "Query Optimization (disabled)"
-    )
-
-    st.markdown(
-        f"""
-        <div style="background:#000000; padding:10px; border-radius:10px;">
-          <div style="font-weight:800; color:#bfdbfe; margin-bottom:10px;">
-            Upload Documents → Chunking → Embeddings → ChromaDB → Retrieval → LLM → Answer
-          </div>
-          <div style="display:flex; flex-direction:column; gap:8px; max-width:900px;">
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              📄 Upload Documents<br/><span style="color:#9ca3af; font-weight:500;">(PDF/DOCX/TXT/MD)</span>
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              ✂️ Chunking
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              🔢 Embeddings<br/><span style="color:#9ca3af; font-weight:500;">Sentence Transformers</span>
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              🗄️ ChromaDB
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              🔍 {opt_label}
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              ⚡ {search_label}
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              🏆 {rerank_label}
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              📋 Context Retrieval<br/><span style="color:#9ca3af; font-weight:500;">Document-only grounding</span>
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              🤖 {llm_label}
-            </div>
-            <div style="text-align:center; color:#6b7280; font-size:22px;">↓</div>
-            <div style="background:#0b0b0b; border:1px solid #2a2a2a; border-radius:10px; padding:12px; color:#fff; font-weight:700;">
-              💬 Answer with Sources
-            </div>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("#### Feature flags (live from `.env`)")
-    st.json(
-        {
-            "LLM_PROVIDER": config.LLM_PROVIDER,
-            "LLM_MODEL": config.LLM_MODEL,
-            "ENABLE_QUERY_OPTIMIZATION": config.ENABLE_QUERY_OPTIMIZATION,
-            "ENABLE_HYBRID_SEARCH": config.ENABLE_HYBRID_SEARCH,
-            "ENABLE_RERANKING": config.ENABLE_RERANKING,
-            "CHROMA": "Cloud" if config.use_chroma_cloud else "Local",
-            "LANGCHAIN_TRACING_V2": config.LANGCHAIN_TRACING_V2,
-        }
-    )
-
-
-def tab_evaluation():
-    st.markdown("### 📈 LLM-as-a-Judge Evaluation")
-    st.markdown("Run an automated evaluation suite to measure **Retrieval Accuracy (Context Relevance)** and **Answer Quality (Faithfulness & Answer Relevance)**.")
-    
-    num_samples = st.slider("Number of samples to evaluate", 1, 50, 5)
-    
-    if st.button("🚀 Run Evaluation Suite", type="primary"):
-        if not st.session_state.db_ready:
-            st.error("Please build the vector database first in the sidebar!")
-            return
-            
-        if st.session_state.rag is None:
-            st.session_state.rag = DocumentRAGChain(st.session_state.vsm)
-            
-        progress_text = "Evaluating... Please wait."
-        my_bar = st.progress(0, text=progress_text)
-        
-        def update_progress(current, total):
-            progress = current / total
-            my_bar.progress(progress, text=f"Evaluating sample {current} of {total}...")
-            
-        evaluator = RAGEvaluator()
-        
-        with st.spinner("Running evaluation..."):
-            results = evaluator.run_evaluation_suite("eval_dataset.json", st.session_state.rag, num_samples, progress_callback=update_progress)
-            
-        my_bar.empty()
-        
-        if results:
-            avg_ctx = sum(r['context_relevance'] for r in results) / len(results)
-            avg_faith = sum(r['faithfulness'] for r in results) / len(results)
-            avg_ans = sum(r['answer_relevance'] for r in results) / len(results)
-            
-            st.markdown("#### Aggregate Metrics")
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Context Relevance", f"{avg_ctx:.2f}", delta=None, delta_color="normal")
-            c2.metric("Faithfulness", f"{avg_faith:.2f}", delta=None, delta_color="normal")
-            c3.metric("Answer Relevance", f"{avg_ans:.2f}", delta=None, delta_color="normal")
-            
-            st.markdown("#### Detailed Results")
-            st.dataframe(results, use_container_width=True)
-            st.success("Evaluation completed!")
-
-# ─── main ─────────────────────────────────────────────────────────────────────
-def main():
-    if st.session_state.vsm is None:
-        st.session_state.vsm = get_vector_store()
-        refresh_stats()
-
-    top_k = render_sidebar()
-
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "💬 Chat",
-        "📂 Sources",
-        "🔬 Retrieval Debug",
-        "🏗️ Architecture",
-        "📈 Evaluation",
-    ])
-    with tab1:
-        tab_chat(top_k)
-    with tab2:
-        tab_sources()
-    with tab3:
-        tab_debug()
-    with tab4:
-        tab_architecture()
-    with tab5:
-        tab_evaluation()
-
-
-if __name__ == "__main__":
-    main()
+            if idx < len(st.session_state.history) - 1:
+                st.divider()
