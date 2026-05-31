@@ -26,10 +26,16 @@ def _get_client():
     if config.use_chroma_cloud:
         logger.info("Connecting to ChromaDB Cloud tenant=%s db=%s",
                     config.CHROMA_TENANT, config.CHROMA_DATABASE)
-        return chromadb.CloudClient(
-            tenant=config.CHROMA_TENANT,
-            database=config.CHROMA_DATABASE,
-            api_key=config.CHROMA_API_KEY,
+        # chromadb 0.5.3 uses HttpClient with auth headers for cloud
+        return chromadb.HttpClient(
+            host="api.trychroma.com",
+            port=443,
+            ssl=True,
+            headers={
+                "Authorization": f"Bearer {config.CHROMA_API_KEY}",
+                "X-Chroma-Tenant": config.CHROMA_TENANT,
+                "X-Chroma-Database": config.CHROMA_DATABASE,
+            },
         )
     logger.info("Using local ChromaDB at %s", config.CHROMA_PERSIST_DIR)
     return chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
