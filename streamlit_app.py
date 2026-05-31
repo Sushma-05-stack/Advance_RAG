@@ -18,24 +18,31 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Inject secrets from Streamlit Cloud into env vars ───────────────────────
+if "GROQ_API_KEY" in st.secrets:
+    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+if "LANGCHAIN_API_KEY" in st.secrets:
+    os.environ["LANGCHAIN_API_KEY"] = st.secrets["LANGCHAIN_API_KEY"]
+if "LANGCHAIN_TRACING_V2" in st.secrets:
+    os.environ["LANGCHAIN_TRACING_V2"] = st.secrets["LANGCHAIN_TRACING_V2"]
+if "LANGCHAIN_PROJECT" in st.secrets:
+    os.environ["LANGCHAIN_PROJECT"] = st.secrets["LANGCHAIN_PROJECT"]
+
+
 # ── Lazy imports (avoid crashing before secrets are set) ────────────────────
 @st.cache_resource(show_spinner="Loading models & vector store…")
 def load_components():
     from config import config
     from document_processor import DocumentProcessor
     from vector_store import VectorStoreManager
-    from rag_chain import AdvancedRAGChain
+    from rag_chain import DocumentRAGChain
 
     config.validate()
     processor = DocumentProcessor()
     vsm = VectorStoreManager()
-    rag = AdvancedRAGChain(vsm)
+    rag = DocumentRAGChain(vsm)
     return processor, vsm, rag
 
-
-# ── Inject secrets from Streamlit Cloud into env vars ───────────────────────
-if "OPENAI_API_KEY" in st.secrets:
-    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 # ── Custom CSS ───────────────────────────────────────────────────────────────
 st.markdown("""
@@ -58,9 +65,9 @@ st.markdown("""
         font-size: 0.8rem;
         margin: 2px 4px 2px 0;
     }
-    .score-good  { color: #16a34a; font-weight: 600; }
-    .score-ok    { color: #d97706; font-weight: 600; }
-    .score-low   { color: #dc2626; font-weight: 600; }
+    .score-good { color: #16a34a; font-weight: 600; }
+    .score-ok   { color: #d97706; font-weight: 600; }
+    .score-low  { color: #dc2626; font-weight: 600; }
     .stat-card {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -74,30 +81,30 @@ st.markdown("""
 
 # ── Header ───────────────────────────────────────────────────────────────────
 st.title("🔍 Advanced RAG — Document Q&A")
-st.caption("Answers come **only** from your uploaded documents. Powered by ChromaDB + OpenAI.")
+st.caption("Answers come **only** from your uploaded documents. Powered by ChromaDB + Groq LLM.")
 
 # ── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("⚙️ Settings")
 
-    # API key input (for local use; on Streamlit Cloud use secrets)
-    if not os.environ.get("OPENAI_API_KEY"):
+    # API key input (for local use; on Streamlit Cloud use secrets.toml)
+    if not os.environ.get("GROQ_API_KEY"):
         api_key = st.text_input(
-            "OpenAI API Key",
+            "Groq API Key",
             type="password",
-            placeholder="sk-...",
-            help="Enter your OpenAI API key. It is not stored anywhere.",
+            placeholder="gsk_...",
+            help="Free key at https://console.groq.com — not stored anywhere.",
         )
         if api_key:
-            os.environ["OPENAI_API_KEY"] = api_key
+            os.environ["GROQ_API_KEY"] = api_key
+            # clear cached components so they reinitialise with the new key
+            st.cache_resource.clear()
     else:
-        st.success("✅ API key loaded")
+        st.success("✅ Groq API key loaded")
 
     st.divider()
 
     top_k = st.slider("Chunks to retrieve (k)", min_value=1, max_value=15, value=5)
-    rewrite = st.toggle("Query rewriting", value=True,
-                        help="Rewrites your question into a better search query")
 
     st.divider()
     st.header("📄 Upload Documents")
@@ -108,8 +115,8 @@ with st.sidebar:
     )
 
     if uploaded_files and st.button("📥 Ingest Documents", use_container_width=True):
-        if not os.environ.get("OPENAI_API_KEY"):
-            st.error("Please enter your OpenAI API key first.")
+        if not os.environ.get("GROQ_API_KEY"):
+            st.error("Please enter your Groq API key first.")
         else:
             try:
                 processor, vsm, rag = load_components()
@@ -132,8 +139,10 @@ with st.sidebar:
                     finally:
                         os.unlink(tmp_path)
 
-                    progress.progress((i + 1) / len(uploaded_files),
-                                      text=f"Processed {i+1}/{len(uploaded_files)} files")
+                    progress.progress(
+                        (i + 1) / len(uploaded_files),
+                        text=f"Processed {i + 1}/{len(uploaded_files)} files",
+                    )
 
                 progress.empty()
                 st.success(f"Ingested {len(uploaded_files)} file(s) → {total_chunks} chunks total")
@@ -144,8 +153,8 @@ with st.sidebar:
 
     st.divider()
 
-    # Document management
-    if os.environ.get("OPENAI_API_KEY"):
+    # Document management (only shown once key is present)
+    if os.environ.get("GROQ_API_KEY"):
         try:
             _, vsm, _ = load_components()
             sources = vsm.list_sources()
@@ -174,9 +183,9 @@ with st.sidebar:
 
 # ── Main area ────────────────────────────────────────────────────────────────
 
-# Check prerequisites
-if not os.environ.get("OPENAI_API_KEY"):
-    st.info("👈 Enter your OpenAI API key in the sidebar to get started.")
+if not os.environ.get("GROQ_API_KEY"):
+    st.info("👈 Enter your Groq API key in the sidebar to get started.\n\n"
+            "Get a free key at https://console.groq.com")
     st.stop()
 
 try:
@@ -186,23 +195,28 @@ except Exception as e:
     st.stop()
 
 doc_count = vsm.get_document_count()
+sources = vsm.list_sources()
 
 # Stats row
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.markdown(f'<div class="stat-card">📦 <b>{doc_count}</b><br><small>Chunks stored</small></div>',
-                unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="stat-card">📦 <b>{doc_count}</b><br><small>Chunks stored</small></div>',
+        unsafe_allow_html=True,
+    )
 with col2:
-    sources = vsm.list_sources()
-    st.markdown(f'<div class="stat-card">📄 <b>{len(sources)}</b><br><small>Documents</small></div>',
-                unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="stat-card">📄 <b>{len(sources)}</b><br><small>Documents</small></div>',
+        unsafe_allow_html=True,
+    )
 with col3:
-    st.markdown(f'<div class="stat-card">🔍 <b>{top_k}</b><br><small>Chunks per query</small></div>',
-                unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="stat-card">🔍 <b>{top_k}</b><br><small>Chunks per query</small></div>',
+        unsafe_allow_html=True,
+    )
 
 st.divider()
 
-# No documents warning
 if doc_count == 0:
     st.warning("⚠️ No documents ingested yet. Upload files using the sidebar.")
     st.stop()
@@ -218,7 +232,7 @@ if sources:
 # Question input
 question = st.text_input(
     "💬 Ask a question about your documents",
-    placeholder="e.g. What is the refund policy?",
+    placeholder="e.g. What are the main findings?",
 )
 
 ask_col, clear_col = st.columns([5, 1])
@@ -235,11 +249,8 @@ if ask_btn and question.strip():
         result = rag.query(
             question=question,
             k=top_k,
-            filter_source=filter_source,
-            rewrite_query=rewrite,
         )
 
-    # Store in session history
     if "history" not in st.session_state:
         st.session_state.history = []
     st.session_state.history.insert(0, result)
@@ -253,10 +264,12 @@ if "history" in st.session_state and st.session_state.history:
         with st.container():
             st.markdown(f"**❓ {result['question']}**")
 
-            if rewrite and result.get("rewritten_query") != result["question"]:
-                st.caption(f"🔄 Search query: *{result['rewritten_query']}*")
+            # Show rewritten / expanded queries
+            queries = result.get("search_queries", [])
+            if queries and queries[0] != result["question"]:
+                st.caption(f"🔄 Search queries used: *{' | '.join(queries)}*")
 
-            # Answer box
+            # Answer
             st.markdown(
                 f'<div class="answer-box">{result["answer"]}</div>',
                 unsafe_allow_html=True,
@@ -265,20 +278,17 @@ if "history" in st.session_state and st.session_state.history:
             # Sources expander
             if result.get("sources"):
                 with st.expander(
-                    f"📚 {result['num_chunks_retrieved']} source chunk(s) retrieved", expanded=False
+                    f"📚 {result['num_chunks_retrieved']} source chunk(s) retrieved",
+                    expanded=False,
                 ):
                     for src in result["sources"]:
                         score = src["relevance_score"]
-                        # Lower distance = better match in ChromaDB
                         if score < 0.5:
-                            score_class = "score-good"
-                            score_label = "High relevance"
+                            score_class, score_label = "score-good", "High relevance"
                         elif score < 1.0:
-                            score_class = "score-ok"
-                            score_label = "Medium relevance"
+                            score_class, score_label = "score-ok", "Medium relevance"
                         else:
-                            score_class = "score-low"
-                            score_label = "Low relevance"
+                            score_class, score_label = "score-low", "Low relevance"
 
                         page_info = f" · page {src['page']}" if src.get("page") else ""
                         st.markdown(
