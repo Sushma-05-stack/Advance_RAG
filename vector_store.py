@@ -1,5 +1,6 @@
 """ChromaDB vector store — Groq embeddings API, chromadb 0.5.3."""
 import logging
+import os
 from typing import List, Optional, Tuple
 
 import chromadb
@@ -14,11 +15,14 @@ logger = logging.getLogger(__name__)
 
 
 def _get_embeddings() -> OpenAIEmbeddings:
-    """Groq embeddings via OpenAI-compatible API — pure HTTP, zero compilation."""
+    """OpenAI embeddings — reliable, no local compilation needed."""
+    api_key = os.environ.get("OPENAI_API_KEY", "")
+    if not api_key:
+        # Fall back to Groq key if OpenAI not set (will fail gracefully)
+        api_key = os.environ.get("GROQ_API_KEY", "")
     return OpenAIEmbeddings(
-        api_key=config.GROQ_API_KEY,
-        base_url="https://api.groq.com/openai/v1",
-        model="nomic-embed-text-v1.5",
+        api_key=api_key,
+        model="text-embedding-3-small",
     )
 
 
