@@ -94,6 +94,25 @@ class VectorStoreManager:
         except Exception:
             return []
 
+    def delete_by_source(self, source_file: str):
+        """Delete all chunks belonging to a specific source file."""
+        try:
+            result = self.vector_store._collection.get(
+                where={"source_file": source_file},
+                include=["metadatas"],
+            )
+            ids = result.get("ids", [])
+            if ids:
+                self.vector_store._collection.delete(ids=ids)
+                logger.info(f"Deleted {len(ids)} chunks from '{source_file}'")
+                self._sync_bm25()
+        except Exception as e:
+            logger.error(f"Failed to delete source '{source_file}': {e}")
+
+    def delete_collection(self):
+        """Delete all documents (alias for clear)."""
+        self.clear()
+
     def clear(self):
         self.vector_store.delete_collection()
         self.bm25_index = BM25Index()
