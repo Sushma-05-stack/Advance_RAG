@@ -10,7 +10,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from rank_bm25 import BM25Okapi
-from sentence_transformers import CrossEncoder
 
 from config import config
 
@@ -111,28 +110,27 @@ def reciprocal_rank_fusion(lists: List[List[Document]], k: int = 60) -> List[Tup
 
 
 class Reranker:
-    def __init__(self):
-        self._model: Optional[CrossEncoder] = None
-
-    def _load(self) -> CrossEncoder:
-        if self._model is None:
-            self._model = CrossEncoder(config.RERANKER_MODEL)
-        return self._model
+    """Lightweight reranker using keyword overlap scoring — no extra dependencies."""
 
     def rerank(self, query: str, candidates: List[Tuple[Document, float]], top_n: int):
         if not candidates:
             return []
-        pairs = [(query, d.page_content) for d, _ in candidates]
-        scores = self._load().predict(pairs)
-        ranked = sorted(zip([d for d, _ in candidates], scores), key=lambda x: float(x[1]), reverse=True)
-        return [(d, float(s)) for d, s in ranked[:top_n]]
+        query_tokens = set(query.lower().split())
+
+        def score(doc: Document) -> float:
+            doc_tokens = set(doc.page_content.lower().split())
+            overlap = len(query_tokens & doc_tokens)
+            return overlap / (len(query_tokens) + 1e-9)
+
+        ranked = sorted(candidates, key=lambda x: score(x[0]), reverse=True)
+        return ranked[:top_n]
 
 
 class HybridRetriever:
     def __init__(self, vsm, bm25: BM25Index):
         self.vsm = vsm
         self.bm25 = bm25
-        self.reranker = Reranker() if config.ENABLE_RERANKING else None
+        self.reranker = Reranker()
 
     def retrieve(
         self,

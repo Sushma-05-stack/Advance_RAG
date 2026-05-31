@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 import chromadb
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 
 from config import config
 from retrieval import BM25Index
@@ -19,10 +19,8 @@ logger = logging.getLogger(__name__)
 
 class VectorStoreManager:
     def __init__(self):
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name=config.EMBEDDING_MODEL,
-            model_kwargs={"device": "cpu"},
-            encode_kwargs={"normalize_embeddings": True},
+        self.embeddings = FastEmbedEmbeddings(
+            model_name="BAAI/bge-small-en-v1.5",  # ONNX model, no Rust/PyTorch needed
         )
         self.bm25_index = BM25Index()
         self.vector_store: Optional[Chroma] = None
