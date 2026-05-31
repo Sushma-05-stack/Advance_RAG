@@ -1,7 +1,7 @@
 """ChromaDB vector store — uses Groq embeddings API (no local model, no compilation).
 
-Connects to ChromaDB Cloud when CHROMA_API_KEY/TENANT/DATABASE are set,
-otherwise falls back to local PersistentClient.
+chromadb>=1.0 has pre-built abi3 wheels (works on Python 3.9-3.14+),
+no tokenizers/Rust dependency.
 """
 import logging
 from typing import List, Optional, Tuple
@@ -18,15 +18,30 @@ logger = logging.getLogger(__name__)
 
 
 def _get_embeddings() -> OpenAIEmbeddings:
-    """
-    Use Groq's embeddings endpoint (nomic-embed-text-v1.5).
-    Groq is OpenAI-compatible so OpenAIEmbeddings works by pointing at Groq's base URL.
-    """
+    """Groq embeddings via OpenAI-compatible API — pure HTTP, zero compilation."""
     return OpenAIEmbeddings(
         api_key=config.GROQ_API_KEY,
         base_url="https://api.groq.com/openai/v1",
         model="nomic-embed-text-v1.5",
     )
+
+
+def _get_client():
+    if config.use_chroma_cloud:
+        logger.info("Connecting to ChromaDB Cloud tenant=%s db=%s",
+                    config.CHROMA_TENANT, config.CHROMA_DATABASE)
+        return chromadb.HttpClient(
+            host="api.trychroma.com",
+            port=443,
+            ssl=True,
+            headers={
+                "x-chroma-token": config.CHROMA_API_KEY,
+                "x-tenant": config.CHROMA_TENANT,
+                "x-database": config.CHROMA_DATABASE,
+            },
+        )
+    logger.info("Using local ChromaDB at %s", config.CHROMA_PERSIST_DIR)
+    return chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
 
 
 class VectorStoreManager:
@@ -37,21 +52,9 @@ class VectorStoreManager:
         self._init_store()
         self._sync_bm25()
 
-    def _client(self):
-        if config.use_chroma_cloud:
-            logger.info("Connecting to ChromaDB Cloud (tenant=%s, db=%s)",
-                        config.CHROMA_TENANT, config.CHROMA_DATABASE)
-            return chromadb.CloudClient(
-                tenant=config.CHROMA_TENANT,
-                database=config.CHROMA_DATABASE,
-                api_key=config.CHROMA_API_KEY,
-            )
-        logger.info("Using local ChromaDB at %s", config.CHROMA_PERSIST_DIR)
-        return chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
-
     def _init_store(self):
         self.vector_store = Chroma(
-            client=self._client(),
+            client=_get_client(),
             collection_name=config.CHROMA_COLLECTION_NAME,
             embedding_function=self.embeddings,
         )
@@ -99,16 +102,6 @@ class VectorStoreManager:
         except Exception:
             return []
 
-    def get_all_metadata(self) -> List[dict]:
-        try:
-            result = self.vector_store._collection.get(include=["metadatas", "documents"])
-            rows = []
-            for meta, text in zip(result.get("metadatas", []), result.get("documents", [])):
-                rows.append({**(meta or {}), "preview": (text or "")[:120]})
-            return rows
-        except Exception:
-            return []
-
     def delete_by_source(self, source_file: str):
         try:
             result = self.vector_store._collection.get(
@@ -120,8 +113,6 @@ class VectorStoreManager:
                 self.vector_store._collection.delete(ids=ids)
                 logger.info("Deleted %d chunks from '%s'", len(ids), source_file)
                 self._sync_bm25()
-            else:
-                logger.warning("No chunks found for source: %s", source_file)
         except Exception as e:
             logger.error("Failed to delete source '%s': %s", source_file, e)
 
