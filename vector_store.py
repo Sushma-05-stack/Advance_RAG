@@ -1,4 +1,8 @@
-"""ChromaDB vector store with BM25 sync for hybrid search."""
+"""ChromaDB vector store with BM25 sync for hybrid search.
+
+Uses chromadb-client (thin HTTP client) — no Rust/C++ compilation needed.
+Connects to ChromaDB Cloud when CHROMA_API_KEY is set, otherwise local PersistentClient.
+"""
 import logging
 from typing import List, Optional, Tuple
 
@@ -27,11 +31,14 @@ class VectorStoreManager:
 
     def _client(self):
         if config.use_chroma_cloud:
+            logger.info("Connecting to ChromaDB Cloud (tenant=%s, db=%s)",
+                        config.CHROMA_TENANT, config.CHROMA_DATABASE)
             return chromadb.CloudClient(
                 tenant=config.CHROMA_TENANT,
                 database=config.CHROMA_DATABASE,
                 api_key=config.CHROMA_API_KEY,
             )
+        logger.info("Using local ChromaDB at %s", config.CHROMA_PERSIST_DIR)
         return chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
 
     def _init_store(self):
@@ -104,10 +111,12 @@ class VectorStoreManager:
             ids = result.get("ids", [])
             if ids:
                 self.vector_store._collection.delete(ids=ids)
-                logger.info(f"Deleted {len(ids)} chunks from '{source_file}'")
+                logger.info("Deleted %d chunks from '%s'", len(ids), source_file)
                 self._sync_bm25()
+            else:
+                logger.warning("No chunks found for source: %s", source_file)
         except Exception as e:
-            logger.error(f"Failed to delete source '{source_file}': {e}")
+            logger.error("Failed to delete source '%s': %s", source_file, e)
 
     def delete_collection(self):
         """Delete all documents (alias for clear)."""
