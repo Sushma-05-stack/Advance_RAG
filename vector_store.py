@@ -1,4 +1,4 @@
-"""ChromaDB vector store — Groq embeddings API, chromadb 0.5.3."""
+"""ChromaDB vector store — HuggingFace Inference API embeddings (free), chromadb 0.5.3."""
 import logging
 import os
 from typing import List, Optional, Tuple
@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple
 import chromadb
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 
 from config import config
 from retrieval import BM25Index
@@ -14,15 +14,15 @@ from retrieval import BM25Index
 logger = logging.getLogger(__name__)
 
 
-def _get_embeddings() -> OpenAIEmbeddings:
-    """OpenAI embeddings — reliable, no local compilation needed."""
-    api_key = os.environ.get("OPENAI_API_KEY", "")
-    if not api_key:
-        # Fall back to Groq key if OpenAI not set (will fail gracefully)
-        api_key = os.environ.get("GROQ_API_KEY", "")
-    return OpenAIEmbeddings(
-        api_key=api_key,
-        model="text-embedding-3-small",
+def _get_embeddings() -> HuggingFaceInferenceAPIEmbeddings:
+    """
+    Free embeddings via HuggingFace Inference API.
+    Uses all-MiniLM-L6-v2 — no local model, pure HTTP, no quota issues.
+    HF_TOKEN is optional for free tier (works without token too).
+    """
+    return HuggingFaceInferenceAPIEmbeddings(
+        api_key=os.environ.get("HF_TOKEN", "hf_dummy"),
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
     )
 
 
