@@ -1,7 +1,7 @@
-"""ChromaDB vector store with BM25 sync for hybrid search.
+"""ChromaDB vector store — uses Groq embeddings API (no local model, no compilation).
 
-Uses chromadb-client (thin HTTP client) — no Rust/C++ compilation needed.
-Connects to ChromaDB Cloud when CHROMA_API_KEY is set, otherwise local PersistentClient.
+Connects to ChromaDB Cloud when CHROMA_API_KEY/TENANT/DATABASE are set,
+otherwise falls back to local PersistentClient.
 """
 import logging
 from typing import List, Optional, Tuple
@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 import chromadb
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-from langchain_community.embeddings import FastEmbedEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 from config import config
 from retrieval import BM25Index
@@ -17,11 +17,21 @@ from retrieval import BM25Index
 logger = logging.getLogger(__name__)
 
 
+def _get_embeddings() -> OpenAIEmbeddings:
+    """
+    Use Groq's embeddings endpoint (nomic-embed-text-v1.5).
+    Groq is OpenAI-compatible so OpenAIEmbeddings works by pointing at Groq's base URL.
+    """
+    return OpenAIEmbeddings(
+        api_key=config.GROQ_API_KEY,
+        base_url="https://api.groq.com/openai/v1",
+        model="nomic-embed-text-v1.5",
+    )
+
+
 class VectorStoreManager:
     def __init__(self):
-        self.embeddings = FastEmbedEmbeddings(
-            model_name="BAAI/bge-small-en-v1.5",  # ONNX model, no Rust/PyTorch needed
-        )
+        self.embeddings = _get_embeddings()
         self.bm25_index = BM25Index()
         self.vector_store: Optional[Chroma] = None
         self._init_store()
@@ -100,7 +110,6 @@ class VectorStoreManager:
             return []
 
     def delete_by_source(self, source_file: str):
-        """Delete all chunks belonging to a specific source file."""
         try:
             result = self.vector_store._collection.get(
                 where={"source_file": source_file},
@@ -117,7 +126,6 @@ class VectorStoreManager:
             logger.error("Failed to delete source '%s': %s", source_file, e)
 
     def delete_collection(self):
-        """Delete all documents (alias for clear)."""
         self.clear()
 
     def clear(self):

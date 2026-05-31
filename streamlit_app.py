@@ -25,6 +25,15 @@ if "LANGCHAIN_TRACING_V2" in st.secrets:
     os.environ["LANGCHAIN_TRACING_V2"] = st.secrets["LANGCHAIN_TRACING_V2"]
 if "LANGCHAIN_PROJECT" in st.secrets:
     os.environ["LANGCHAIN_PROJECT"] = st.secrets["LANGCHAIN_PROJECT"]
+# ChromaDB Cloud
+if "CHROMA_API_KEY" in st.secrets:
+    os.environ["CHROMA_API_KEY"] = st.secrets["CHROMA_API_KEY"]
+if "CHROMA_TENANT" in st.secrets:
+    os.environ["CHROMA_TENANT"] = st.secrets["CHROMA_TENANT"]
+if "CHROMA_DATABASE" in st.secrets:
+    os.environ["CHROMA_DATABASE"] = st.secrets["CHROMA_DATABASE"]
+if "CHROMA_COLLECTION_NAME" in st.secrets:
+    os.environ["CHROMA_COLLECTION_NAME"] = st.secrets["CHROMA_COLLECTION_NAME"]
 
 
 # ── Lazy imports (avoid crashing before secrets are set) ────────────────────
