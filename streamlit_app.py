@@ -140,7 +140,9 @@ with st.sidebar:
                         total_chunks += len(ids)
                         st.toast(f"✅ {uf.name} → {len(ids)} chunks")
                     except Exception as upload_err:
+                        import traceback
                         st.error(f"Failed to process {uf.name}: {upload_err}")
+                        st.code(traceback.format_exc())
 
                     progress.progress(
                         (i + 1) / len(uploaded_files),
@@ -152,7 +154,9 @@ with st.sidebar:
                 st.rerun()
 
             except Exception as e:
+                import traceback
                 st.error(f"Ingestion failed: {e}")
+                st.code(traceback.format_exc())
 
     st.divider()
 
