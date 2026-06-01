@@ -107,20 +107,24 @@ st.caption("Answers come **only** from your uploaded documents. Powered by Chrom
 with st.sidebar:
     st.header("⚙️ Settings")
 
-    # API key input (for local use; on Streamlit Cloud use secrets.toml)
-    if not os.environ.get("GROQ_API_KEY"):
-        api_key = st.text_input(
-            "Groq API Key",
-            type="password",
-            placeholder="gsk_...",
-            help="Free key at https://console.groq.com — not stored anywhere.",
-        )
-        if api_key:
-            os.environ["GROQ_API_KEY"] = api_key
-            # clear cached components so they reinitialise with the new key
-            st.cache_resource.clear()
-    else:
+    # ── Groq API Key input — always shown so user can update it ──────────────
+    saved_key = os.environ.get("GROQ_API_KEY", "")
+    api_key = st.text_input(
+        "🔑 Groq API Key",
+        value=saved_key,
+        type="password",
+        placeholder="gsk_...",
+        help="Get a free key at https://console.groq.com",
+    )
+    if api_key and api_key != saved_key:
+        os.environ["GROQ_API_KEY"] = api_key
+        st.cache_resource.clear()
+        st.rerun()
+
+    if os.environ.get("GROQ_API_KEY"):
         st.success("✅ Groq API key loaded")
+    else:
+        st.warning("Enter your Groq API key to get started")
 
     st.divider()
 
