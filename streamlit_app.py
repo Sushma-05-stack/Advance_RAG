@@ -17,25 +17,19 @@ st.set_page_config(
 )
 
 # ── Inject secrets from Streamlit Cloud into env vars ───────────────────────
-if "GROQ_API_KEY" in st.secrets:
-    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
-if "OPENAI_API_KEY" in st.secrets:
-    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-if "LANGCHAIN_API_KEY" in st.secrets:
-    os.environ["LANGCHAIN_API_KEY"] = st.secrets["LANGCHAIN_API_KEY"]
-if "LANGCHAIN_TRACING_V2" in st.secrets:
-    os.environ["LANGCHAIN_TRACING_V2"] = st.secrets["LANGCHAIN_TRACING_V2"]
-if "LANGCHAIN_PROJECT" in st.secrets:
-    os.environ["LANGCHAIN_PROJECT"] = st.secrets["LANGCHAIN_PROJECT"]
-# ChromaDB Cloud
-if "CHROMA_API_KEY" in st.secrets:
-    os.environ["CHROMA_API_KEY"] = st.secrets["CHROMA_API_KEY"]
-if "CHROMA_TENANT" in st.secrets:
-    os.environ["CHROMA_TENANT"] = st.secrets["CHROMA_TENANT"]
-if "CHROMA_DATABASE" in st.secrets:
-    os.environ["CHROMA_DATABASE"] = st.secrets["CHROMA_DATABASE"]
-if "CHROMA_COLLECTION_NAME" in st.secrets:
-    os.environ["CHROMA_COLLECTION_NAME"] = st.secrets["CHROMA_COLLECTION_NAME"]
+# Uses try/except so it works both locally (with .env) and on Streamlit Cloud
+try:
+    for key in ["GROQ_API_KEY", "OPENAI_API_KEY", "LLM_PROVIDER", "LLM_MODEL",
+                "GROQ_BASE_URL", "LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2",
+                "LANGCHAIN_PROJECT", "CHROMA_API_KEY", "CHROMA_TENANT",
+                "CHROMA_DATABASE", "CHROMA_COLLECTION_NAME", "LLM_TEMPERATURE",
+                "CHUNK_SIZE", "CHUNK_OVERLAP", "TOP_K_RESULTS", "RETRIEVAL_CANDIDATE_K",
+                "ENABLE_QUERY_OPTIMIZATION", "ENABLE_QUERY_REWRITE", "ENABLE_MULTI_QUERY",
+                "MULTI_QUERY_COUNT", "ENABLE_HYBRID_SEARCH", "ENABLE_RERANKING"]:
+        if key in st.secrets:
+            os.environ[key] = st.secrets[key]
+except Exception:
+    pass  # Running locally with .env file — secrets not needed
 
 
 # ── Lazy imports (avoid crashing before secrets are set) ────────────────────
