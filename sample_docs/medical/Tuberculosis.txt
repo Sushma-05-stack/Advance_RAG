@@ -1,10 +1,47 @@
-# Tuberculosis
+# Tuberculosis (TB)
 
 ## Overview
-An infectious bacterial disease characterized by the growth of nodules in the tissues, especially the lungs. Treatment requires a long course of multiple antibiotics.
+Tuberculosis is a potentially serious infectious disease caused by the bacterium Mycobacterium tuberculosis. It primarily affects the lungs (pulmonary TB) but can affect any organ. TB is one of the top 10 causes of death worldwide.
+
+## Types
+- **Latent TB**: Bacteria are present but inactive; no symptoms; not contagious; can become active
+- **Active TB**: Bacteria are active; causes symptoms; is contagious
+- **Pulmonary TB**: Affects the lungs (most common)
+- **Extrapulmonary TB**: Affects lymph nodes, kidneys, spine, brain
+
+## Transmission
+- Spread through the air when a person with active pulmonary TB coughs, sneezes, or speaks
+- Not spread by touching surfaces, sharing food, or kissing
+- Risk increases with prolonged close contact
+
+## Symptoms
+- Persistent cough lasting 3+ weeks
+- Coughing up blood or mucus (hemoptysis)
+- Chest pain
+- Unintentional weight loss
+- Fatigue
+- Fever
+- Night sweats
+- Loss of appetite
 
 ## Diagnosis
-Diagnosis of Tuberculosis typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Tuberculin Skin Test (TST/Mantoux)**: Injection of purified protein derivative; read after 48–72 hours
+- **Interferon-Gamma Release Assays (IGRAs)**: Blood tests (QuantiFERON-TB Gold)
+- **Chest X-ray**: Shows lung abnormalities
+- **Sputum smear and culture**: Confirms active TB; culture is gold standard
+- **Nucleic Acid Amplification Tests (NAAT)**: Rapid molecular detection
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Latent TB**: Isoniazid for 6–9 months; or Isoniazid + Rifapentine for 3 months
+- **Active TB (standard regimen)**: 
+  - Intensive phase (2 months): Isoniazid + Rifampicin + Pyrazinamide + Ethambutol
+  - Continuation phase (4 months): Isoniazid + Rifampicin
+- **Drug-Resistant TB (MDR-TB)**: Requires 18–24 months of second-line drugs
+- Treatment must be completed fully to prevent drug resistance
+
+## Prevention
+- BCG (Bacillus Calmette-Guérin) vaccine — given at birth in high-prevalence countries
+- Treating latent TB infection
+- Infection control measures in healthcare settings
+- Adequate ventilation
+- Early identification and treatment of active cases

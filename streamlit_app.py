@@ -39,11 +39,28 @@ def load_components():
     from document_processor import DocumentProcessor
     from vector_store import VectorStoreManager
     from rag_chain import DocumentRAGChain
+    from pathlib import Path
 
     config.validate()
     processor = DocumentProcessor()
     vsm = VectorStoreManager()
     rag = DocumentRAGChain(vsm)
+
+    # Auto-ingest sample_docs on first load if store is empty
+    if vsm.get_document_count() == 0:
+        docs_dir = Path("./sample_docs")
+        if docs_dir.exists():
+            files = list(docs_dir.rglob("*.txt")) + \
+                    list(docs_dir.rglob("*.pdf")) + \
+                    list(docs_dir.rglob("*.docx")) + \
+                    list(docs_dir.rglob("*.md"))
+            for fpath in files:
+                try:
+                    chunks = processor.process_upload(fpath.name, fpath.read_bytes())
+                    vsm.add_documents(chunks)
+                except Exception:
+                    pass
+
     return processor, vsm, rag
 
 

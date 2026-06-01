@@ -1,10 +1,52 @@
 # HIV/AIDS
 
 ## Overview
-A chronic, potentially life-threatening condition caused by the human immunodeficiency virus (HIV), which interferes with the body's ability to fight infections.
+HIV (Human Immunodeficiency Virus) is a virus that attacks the immune system, specifically CD4+ T cells (helper T cells). If untreated, HIV can lead to AIDS (Acquired Immunodeficiency Syndrome), the most advanced stage of HIV infection.
+
+## Transmission
+- Unprotected sexual contact (vaginal, anal, oral)
+- Sharing needles, syringes, or drug equipment
+- Blood transfusions with infected blood
+- Mother to child during pregnancy, childbirth, or breastfeeding
+- NOT transmitted by: casual contact, hugging, sharing food, mosquito bites
+
+## Stages
+1. **Acute HIV Infection**: 2–4 weeks after exposure; flu-like symptoms; very high viral load; highly contagious
+2. **Chronic HIV Infection (Clinical Latency)**: Virus is active but reproduces slowly; may last 10+ years; few or no symptoms
+3. **AIDS**: CD4 count <200 cells/mm³ or presence of AIDS-defining illness; severe immune deficiency
+
+## Symptoms
+**Acute Stage:**
+- Fever, chills, rash
+- Night sweats
+- Muscle aches, sore throat
+- Fatigue, swollen lymph nodes
+- Mouth ulcers
+
+**AIDS Stage:**
+- Rapid weight loss
+- Recurring fever
+- Extreme fatigue
+- Prolonged swelling of lymph glands
+- Opportunistic infections (pneumocystis pneumonia, toxoplasmosis, CMV)
+- Certain cancers (Kaposi's sarcoma, lymphoma)
 
 ## Diagnosis
-Diagnosis of HIV/AIDS typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **HIV Antibody/Antigen Test**: Detects HIV antibodies and p24 antigen; most common screening test
+- **HIV RNA (Viral Load) Test**: Detects virus directly; used for early diagnosis and monitoring
+- **CD4 Count**: Measures immune system health; normal is 500–1500 cells/mm³
+- **Western Blot**: Confirmatory test
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Antiretroviral Therapy (ART)**: Combination of HIV medicines taken daily; suppresses viral load to undetectable levels
+- **Common regimens**: Integrase inhibitors (dolutegravir) + 2 NRTIs (tenofovir + emtricitabine)
+- **Goal**: Undetectable viral load = Untransmittable (U=U)
+- ART does not cure HIV but allows people to live long, healthy lives
+
+## Prevention
+- **PrEP (Pre-Exposure Prophylaxis)**: Daily medication (tenofovir/emtricitabine) for HIV-negative high-risk individuals; 99% effective
+- **PEP (Post-Exposure Prophylaxis)**: Emergency medication taken within 72 hours of potential exposure
+- Consistent condom use
+- Not sharing needles
+- Regular HIV testing
+- Treating HIV-positive pregnant women to prevent mother-to-child transmission

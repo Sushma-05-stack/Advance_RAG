@@ -1,10 +1,58 @@
 # Epilepsy
 
 ## Overview
-A neurological disorder marked by sudden recurrent episodes of sensory disturbance, loss of consciousness, or convulsions.
+Epilepsy is a neurological disorder characterized by recurrent, unprovoked seizures. A person is diagnosed with epilepsy if they have two unprovoked seizures more than 24 hours apart, or one unprovoked seizure with a high risk of recurrence.
+
+## Types of Seizures
+**Focal (Partial) Seizures:**
+- Focal aware (simple partial): Consciousness preserved; motor, sensory, or autonomic symptoms
+- Focal impaired awareness (complex partial): Altered consciousness; automatisms (lip smacking, hand rubbing)
+- Focal to bilateral tonic-clonic: Starts focal, spreads to both hemispheres
+
+**Generalized Seizures:**
+- **Tonic-clonic (Grand Mal)**: Loss of consciousness, stiffening (tonic), then rhythmic jerking (clonic)
+- **Absence (Petit Mal)**: Brief staring spells; common in children; 5–30 seconds
+- **Myoclonic**: Brief, sudden muscle jerks
+- **Atonic (Drop attacks)**: Sudden loss of muscle tone; falls
+- **Tonic**: Stiffening of muscles
+- **Clonic**: Rhythmic jerking movements
+
+## Causes
+- Genetic factors (idiopathic epilepsy)
+- Brain injury (trauma, stroke, tumor)
+- Infections (meningitis, encephalitis)
+- Developmental disorders (autism, neurofibromatosis)
+- Metabolic disorders
+- Unknown (cryptogenic) — 50% of cases
 
 ## Diagnosis
-Diagnosis of Epilepsy typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **EEG (Electroencephalogram)**: Records brain electrical activity; shows epileptiform discharges
+- **MRI brain**: Identifies structural causes (tumors, malformations, scars)
+- **Blood tests**: Glucose, electrolytes, CBC, metabolic panel
+- **Video-EEG monitoring**: Gold standard for seizure classification
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+**Anti-Seizure Medications (ASMs):**
+- First-line: Levetiracetam, lamotrigine, valproate, carbamazepine, oxcarbazepine
+- 70% of patients achieve seizure control with medication
+- Treatment usually continued for 2+ years after last seizure
+
+**Drug-Resistant Epilepsy (30% of patients):**
+- Epilepsy surgery (resection of seizure focus)
+- Vagus nerve stimulation (VNS)
+- Responsive neurostimulation (RNS)
+- Deep brain stimulation (DBS)
+- Ketogenic diet (high-fat, low-carbohydrate)
+
+## First Aid for Seizures
+- Stay calm; time the seizure
+- Protect from injury; cushion head
+- Turn person on their side (recovery position)
+- Do NOT restrain; do NOT put anything in mouth
+- Call emergency services if: seizure >5 minutes, no recovery, injury, first seizure
+
+## Lifestyle Considerations
+- Avoid seizure triggers (sleep deprivation, alcohol, stress, flashing lights)
+- Driving restrictions (varies by country; typically seizure-free for 6–12 months)
+- Swimming and bathing safety precautions
+- Medication adherence is critical

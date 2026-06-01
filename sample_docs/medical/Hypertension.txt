@@ -1,10 +1,41 @@
-# Hypertension
+# Hypertension (High Blood Pressure)
 
 ## Overview
-Abnormally high blood pressure. Treatment often includes ACE inhibitors, calcium channel blockers, and lifestyle changes.
+Hypertension is a chronic condition where the force of blood against artery walls is consistently too high (≥130/80 mmHg). It is called the "silent killer" because it often has no symptoms but significantly increases risk of heart attack, stroke, and kidney disease.
+
+## Classification
+- **Normal**: Systolic <120 mmHg AND Diastolic <80 mmHg
+- **Elevated**: Systolic 120–129 AND Diastolic <80
+- **Stage 1 Hypertension**: Systolic 130–139 OR Diastolic 80–89
+- **Stage 2 Hypertension**: Systolic ≥140 OR Diastolic ≥90
+- **Hypertensive Crisis**: Systolic >180 and/or Diastolic >120
+
+## Causes
+- **Primary (Essential) Hypertension**: No identifiable cause; accounts for 90–95% of cases; linked to genetics, age, obesity, high salt intake
+- **Secondary Hypertension**: Caused by kidney disease, thyroid disorders, sleep apnea, certain medications
+
+## Symptoms
+Most people have no symptoms. When present:
+- Headaches (especially in the morning)
+- Dizziness
+- Nosebleeds
+- Shortness of breath
+- Chest pain (in severe cases)
 
 ## Diagnosis
-Diagnosis of Hypertension typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- Blood pressure measured on two or more separate occasions
+- 24-hour ambulatory blood pressure monitoring
+- Blood tests (kidney function, cholesterol, blood sugar)
+- ECG to check heart
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Lifestyle changes**: Reduce sodium intake (<2.3g/day), DASH diet, regular exercise, weight loss, limit alcohol, quit smoking
+- **Medications**: ACE inhibitors (lisinopril), ARBs (losartan), calcium channel blockers (amlodipine), diuretics (hydrochlorothiazide), beta-blockers
+
+## Complications
+- Heart attack and heart failure
+- Stroke
+- Chronic kidney disease
+- Vision loss (hypertensive retinopathy)
+- Peripheral artery disease
+- Aneurysm

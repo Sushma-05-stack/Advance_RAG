@@ -1,10 +1,45 @@
 # Diabetes
 
 ## Overview
-A metabolic disease in which the body's inability to produce any or enough insulin causes elevated levels of glucose in the blood. Management includes insulin therapy and diet control.
+Diabetes is a chronic metabolic disease characterized by elevated blood glucose levels (hyperglycemia) resulting from defects in insulin secretion, insulin action, or both. There are three main types: Type 1, Type 2, and Gestational diabetes.
+
+## Types
+- **Type 1 Diabetes**: An autoimmune condition where the immune system destroys insulin-producing beta cells in the pancreas. Requires lifelong insulin therapy. Usually diagnosed in children and young adults.
+- **Type 2 Diabetes**: The most common form (90-95% of cases). The body either doesn't produce enough insulin or doesn't use it effectively (insulin resistance). Strongly linked to obesity and sedentary lifestyle.
+- **Gestational Diabetes**: Develops during pregnancy and usually resolves after delivery, but increases risk of Type 2 diabetes later.
+
+## Symptoms
+- Frequent urination (polyuria)
+- Excessive thirst (polydipsia)
+- Unexplained weight loss
+- Fatigue and weakness
+- Blurred vision
+- Slow-healing wounds
+- Frequent infections
+- Tingling or numbness in hands/feet
 
 ## Diagnosis
-Diagnosis of Diabetes typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Fasting Blood Glucose**: ≥126 mg/dL on two separate occasions
+- **HbA1c (Glycated Hemoglobin)**: ≥6.5% indicates diabetes; 5.7–6.4% indicates prediabetes
+- **Oral Glucose Tolerance Test (OGTT)**: Blood glucose ≥200 mg/dL two hours after consuming 75g glucose
+- **Random Blood Glucose**: ≥200 mg/dL with symptoms
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Type 1**: Daily insulin injections or insulin pump therapy; carbohydrate counting; continuous glucose monitoring
+- **Type 2**: Lifestyle changes (diet, exercise, weight loss); oral medications (Metformin is first-line); GLP-1 receptor agonists; SGLT2 inhibitors; insulin if needed
+- **Diet**: Low glycemic index foods, reduced refined carbohydrates, increased fiber
+- **Exercise**: At least 150 minutes of moderate aerobic activity per week
+
+## Complications
+- **Cardiovascular disease**: Leading cause of death in diabetics
+- **Diabetic nephropathy**: Kidney damage leading to chronic kidney disease
+- **Diabetic retinopathy**: Damage to blood vessels in the retina, leading to blindness
+- **Diabetic neuropathy**: Nerve damage causing pain, numbness, and digestive issues
+- **Diabetic foot**: Poor circulation and neuropathy leading to ulcers and amputation risk
+
+## Prevention
+Type 2 diabetes can be prevented or delayed through:
+- Maintaining healthy body weight (BMI 18.5–24.9)
+- Regular physical activity
+- Healthy diet rich in vegetables, whole grains, and lean proteins
+- Avoiding smoking and excessive alcohol

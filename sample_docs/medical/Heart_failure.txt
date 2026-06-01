@@ -1,10 +1,71 @@
-# Heart failure
+# Heart Failure
 
 ## Overview
-Severe failure of the heart to function properly, especially as a cause of death.
+Heart failure (HF) is a chronic condition where the heart muscle doesn't pump blood as well as it should. It does not mean the heart has stopped — it means the heart is not pumping efficiently enough to meet the body's needs.
+
+## Types
+- **HFrEF (Heart Failure with Reduced Ejection Fraction)**: EF <40%; systolic dysfunction; heart muscle is weak
+- **HFpEF (Heart Failure with Preserved Ejection Fraction)**: EF ≥50%; diastolic dysfunction; heart muscle is stiff
+- **HFmrEF**: EF 41–49%; mildly reduced
+- **Left-sided HF**: Fluid backs up into lungs (pulmonary congestion)
+- **Right-sided HF**: Fluid backs up into body (peripheral edema)
+- **Biventricular HF**: Both sides affected
+
+## Causes
+- Coronary artery disease and heart attack (most common)
+- Hypertension
+- Cardiomyopathy (dilated, hypertrophic, restrictive)
+- Valvular heart disease
+- Arrhythmias (atrial fibrillation)
+- Diabetes
+- Obesity
+- Alcohol and drug abuse
+- Chemotherapy
+
+## Symptoms
+- Shortness of breath (dyspnea) — especially with exertion or lying flat (orthopnea)
+- Waking up breathless at night (paroxysmal nocturnal dyspnea)
+- Persistent cough or wheezing (pink, foamy mucus)
+- Swelling (edema) in legs, ankles, feet
+- Rapid or irregular heartbeat
+- Fatigue and weakness
+- Reduced ability to exercise
+- Nausea, lack of appetite
+- Difficulty concentrating
+
+## NYHA Classification
+- **Class I**: No symptoms with ordinary activity
+- **Class II**: Slight limitation; comfortable at rest
+- **Class III**: Marked limitation; comfortable only at rest
+- **Class IV**: Symptoms at rest; unable to carry on any activity
 
 ## Diagnosis
-Diagnosis of Heart failure typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Echocardiogram**: Measures ejection fraction; most important test
+- **BNP/NT-proBNP**: Elevated in heart failure; used for diagnosis and monitoring
+- **Chest X-ray**: Shows cardiomegaly, pulmonary congestion
+- **ECG**: Identifies arrhythmias, prior MI
+- **Blood tests**: CBC, metabolic panel, thyroid function
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+**HFrEF:**
+- ACE inhibitors or ARBs (reduce afterload)
+- Beta-blockers (carvedilol, metoprolol succinate)
+- Mineralocorticoid receptor antagonists (spironolactone)
+- SGLT2 inhibitors (dapagliflozin, empagliflozin) — new standard of care
+- Diuretics (furosemide) for fluid management
+- ARNI (sacubitril/valsartan) — superior to ACE inhibitors
+
+**Devices:**
+- ICD (Implantable Cardioverter-Defibrillator) for sudden cardiac death prevention
+- CRT (Cardiac Resynchronization Therapy) for dyssynchrony
+
+**Advanced HF:**
+- LVAD (Left Ventricular Assist Device)
+- Heart transplantation
+
+## Lifestyle Management
+- Fluid restriction (1.5–2 L/day)
+- Low-sodium diet (<2g/day)
+- Daily weight monitoring
+- Regular moderate exercise (cardiac rehabilitation)
+- Avoid alcohol and smoking

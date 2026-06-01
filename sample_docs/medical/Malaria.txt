@@ -1,10 +1,46 @@
 # Malaria
 
 ## Overview
-An intermittent and remittent fever caused by a protozoan parasite that invades the red blood cells, transmitted by mosquitoes in many tropical and subtropical regions.
+Malaria is a life-threatening disease caused by Plasmodium parasites transmitted to humans through the bites of infected female Anopheles mosquitoes. Five species infect humans: P. falciparum (most deadly), P. vivax, P. malariae, P. ovale, and P. knowlesi.
+
+## Transmission
+- Bite of infected female Anopheles mosquito (primary route)
+- Blood transfusion from infected donor
+- Sharing needles
+- Mother to child during pregnancy or childbirth (congenital malaria)
+
+## Symptoms
+Symptoms appear 10–15 days after mosquito bite:
+- **Classic malaria triad**: Fever, chills, sweating (cyclical pattern every 48–72 hours)
+- Headache
+- Muscle aches and fatigue
+- Nausea and vomiting
+- Anemia (due to destruction of red blood cells)
+- Jaundice (yellowing of skin/eyes)
+
+**Severe Malaria (P. falciparum):**
+- Cerebral malaria (seizures, coma)
+- Severe anemia
+- Respiratory distress
+- Organ failure
+- Hypoglycemia
 
 ## Diagnosis
-Diagnosis of Malaria typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Blood smear microscopy**: Gold standard; identifies species and parasite density
+- **Rapid Diagnostic Tests (RDTs)**: Detect malaria antigens; results in 15–20 minutes
+- **PCR**: Most sensitive; used for species confirmation
+- **Complete blood count**: Shows anemia, thrombocytopenia
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **P. falciparum (uncomplicated)**: Artemisinin-based Combination Therapies (ACTs) — artemether-lumefantrine, artesunate-amodiaquine
+- **Severe malaria**: IV artesunate (preferred) or IV quinine
+- **P. vivax/P. ovale**: Chloroquine + Primaquine (to eliminate liver stage)
+- Treatment must be completed to prevent recurrence
+
+## Prevention
+- **Mosquito nets**: Long-lasting insecticidal nets (LLINs) — most effective
+- **Indoor residual spraying (IRS)**: Insecticide sprayed on walls
+- **Chemoprophylaxis**: Antimalarial drugs for travelers (atovaquone-proguanil, doxycycline, mefloquine)
+- **Mosquito repellents**: DEET-containing products
+- **Vaccine**: RTS,S/AS01 (Mosquirix) — first approved malaria vaccine; recommended for children in sub-Saharan Africa
+- Wearing protective clothing (long sleeves, pants)

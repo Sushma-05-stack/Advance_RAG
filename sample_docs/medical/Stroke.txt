@@ -1,10 +1,62 @@
 # Stroke
 
 ## Overview
-A sudden disabling attack or loss of consciousness caused by an interruption in the flow of blood to the brain.
+A stroke occurs when blood supply to part of the brain is cut off, causing brain cells to die. It is a medical emergency — "Time is Brain." Every minute without treatment, approximately 1.9 million neurons die.
+
+## Types
+- **Ischemic Stroke (87%)**: Caused by a blood clot blocking an artery supplying the brain
+  - Thrombotic: Clot forms in a brain artery
+  - Embolic: Clot travels from elsewhere (heart, carotid artery) to the brain
+- **Hemorrhagic Stroke (13%)**: Caused by a ruptured blood vessel bleeding into the brain
+  - Intracerebral hemorrhage: Bleeding within brain tissue
+  - Subarachnoid hemorrhage: Bleeding in the space surrounding the brain
+- **TIA (Transient Ischemic Attack)**: "Mini-stroke"; temporary blockage; symptoms resolve within 24 hours; warning sign for future stroke
+
+## Recognition — FAST
+- **F**ace drooping: One side of face droops or is numb
+- **A**rm weakness: One arm is weak or numb
+- **S**peech difficulty: Slurred speech, unable to speak or understand
+- **T**ime to call emergency services immediately
+
+## Additional Symptoms
+- Sudden severe headache with no known cause
+- Sudden vision problems in one or both eyes
+- Sudden dizziness, loss of balance or coordination
+- Sudden confusion or trouble understanding
+
+## Risk Factors
+- **Modifiable**: Hypertension (most important), atrial fibrillation, diabetes, high cholesterol, smoking, obesity, physical inactivity, excessive alcohol
+- **Non-modifiable**: Age (risk doubles each decade after 55), family history, prior stroke/TIA, gender (men higher risk; women have higher lifetime risk)
 
 ## Diagnosis
-Diagnosis of Stroke typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **CT scan**: First-line; rules out hemorrhage; fast
+- **MRI/DWI**: More sensitive for ischemic stroke
+- **CT Angiography/MR Angiography**: Visualizes blood vessels
+- **Echocardiogram**: Checks for cardiac source of emboli
+- **Carotid ultrasound**: Checks for carotid artery stenosis
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+**Ischemic Stroke:**
+- **IV tPA (alteplase)**: Clot-busting drug; must be given within 4.5 hours of symptom onset
+- **Mechanical thrombectomy**: Catheter-based clot removal; effective up to 24 hours in selected patients
+- **Antiplatelet therapy**: Aspirin + clopidogrel for TIA/minor stroke
+
+**Hemorrhagic Stroke:**
+- Blood pressure control
+- Reversal of anticoagulation
+- Surgical intervention (craniotomy, coiling) in some cases
+
+## Rehabilitation
+- Physical therapy (mobility, strength)
+- Occupational therapy (daily activities)
+- Speech therapy (language, swallowing)
+- Cognitive rehabilitation
+- Psychological support
+
+## Prevention
+- Control blood pressure (most important)
+- Treat atrial fibrillation with anticoagulants
+- Manage diabetes and cholesterol
+- Quit smoking
+- Maintain healthy weight and exercise regularly
+- Limit alcohol consumption

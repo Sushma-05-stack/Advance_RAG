@@ -1,10 +1,50 @@
 # Pneumonia
 
 ## Overview
-Lung inflammation caused by bacterial or viral infection, in which the air sacs fill with pus and may become solid.
+Pneumonia is an infection that inflames the air sacs (alveoli) in one or both lungs. The air sacs may fill with fluid or pus, causing cough with phlegm, fever, chills, and difficulty breathing. It can range from mild to life-threatening.
+
+## Types
+- **Community-Acquired Pneumonia (CAP)**: Acquired outside healthcare settings; most common
+- **Hospital-Acquired Pneumonia (HAP)**: Develops 48+ hours after hospital admission; often more resistant
+- **Ventilator-Associated Pneumonia (VAP)**: Occurs in patients on mechanical ventilation
+- **Aspiration Pneumonia**: Caused by inhaling food, drink, or vomit into lungs
+
+## Causes
+- **Bacterial**: Streptococcus pneumoniae (most common), Haemophilus influenzae, Mycoplasma pneumoniae (walking pneumonia), Legionella
+- **Viral**: Influenza, RSV, SARS-CoV-2, rhinovirus
+- **Fungal**: Pneumocystis jirovecii (in immunocompromised), Histoplasma, Coccidioides
+- **Atypical**: Mycoplasma, Chlamydophila, Legionella
+
+## Symptoms
+- Cough (productive with yellow/green/rust-colored sputum)
+- Fever, sweating, and shaking chills
+- Shortness of breath
+- Rapid, shallow breathing
+- Sharp or stabbing chest pain (worse with deep breathing or coughing)
+- Fatigue
+- Nausea, vomiting, or diarrhea
+- Confusion (especially in elderly)
 
 ## Diagnosis
-Diagnosis of Pneumonia typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Chest X-ray**: Shows infiltrates/consolidation; confirms diagnosis
+- **CT scan**: More detailed; used when X-ray inconclusive
+- **Sputum culture**: Identifies causative organism
+- **Blood cultures**: For severe cases
+- **CBC**: Shows elevated white blood cells
+- **Pulse oximetry**: Measures oxygen saturation
+- **Urinary antigen tests**: For Streptococcus pneumoniae and Legionella
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Mild CAP (outpatient)**: Amoxicillin or doxycycline; azithromycin for atypical
+- **Moderate CAP (inpatient)**: Beta-lactam + macrolide or respiratory fluoroquinolone
+- **Severe CAP (ICU)**: Broad-spectrum antibiotics; antifungals if indicated
+- **Viral pneumonia**: Supportive care; antivirals (oseltamivir for influenza)
+- **Supportive care**: Rest, fluids, fever reducers, oxygen therapy
+
+## Prevention
+- **Pneumococcal vaccines**: PCV13 and PPSV23 for children, elderly, and high-risk adults
+- **Influenza vaccine**: Annual vaccination
+- **COVID-19 vaccine**
+- Good hand hygiene
+- Avoid smoking
+- Treat underlying conditions

@@ -1,10 +1,47 @@
 # Asthma
 
 ## Overview
-A respiratory condition marked by spasms in the bronchi of the lungs, causing difficulty in breathing. Treatment includes inhaled corticosteroids.
+Asthma is a chronic inflammatory disease of the airways characterized by recurrent episodes of wheezing, breathlessness, chest tightness, and coughing. The airways become swollen and narrow, and may produce extra mucus.
+
+## Types
+- **Allergic Asthma**: Triggered by allergens (pollen, dust mites, pet dander)
+- **Non-allergic Asthma**: Triggered by exercise, cold air, stress, infections
+- **Occupational Asthma**: Caused by workplace irritants
+- **Exercise-induced Bronchoconstriction**: Triggered specifically by physical activity
+
+## Symptoms
+- Wheezing (whistling sound when breathing)
+- Shortness of breath
+- Chest tightness or pain
+- Coughing (especially at night or early morning)
+- Difficulty sleeping due to breathing problems
+
+## Triggers
+- Airborne allergens (pollen, mold, dust mites, pet dander)
+- Respiratory infections (colds, flu)
+- Physical activity
+- Cold air
+- Air pollutants and irritants (smoke, chemical fumes)
+- Certain medications (aspirin, NSAIDs, beta-blockers)
+- Strong emotions and stress
+- Gastroesophageal reflux disease (GERD)
 
 ## Diagnosis
-Diagnosis of Asthma typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- Spirometry: Measures how much air you can exhale and how quickly
+- Peak flow measurement
+- Methacholine challenge test
+- Allergy testing
+- Chest X-ray to rule out other conditions
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Quick-relief (rescue) medications**: Short-acting beta-agonists (albuterol/salbutamol) for immediate symptom relief
+- **Long-term control medications**: Inhaled corticosteroids (fluticasone, budesonide) — most effective; long-acting beta-agonists (salmeterol); leukotriene modifiers (montelukast)
+- **Biologics**: For severe asthma (omalizumab, mepolizumab)
+- **Asthma action plan**: Written plan to manage symptoms and attacks
+
+## Complications
+- Permanent narrowing of airways (airway remodeling)
+- Sleep disturbances
+- Missed school/work days
+- Severe asthma attacks requiring hospitalization
+- Side effects from long-term medication use

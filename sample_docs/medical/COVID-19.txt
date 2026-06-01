@@ -1,10 +1,54 @@
 # COVID-19
 
 ## Overview
-A contagious respiratory and vascular disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2).
+COVID-19 (Coronavirus Disease 2019) is an infectious disease caused by the SARS-CoV-2 virus. It was first identified in Wuhan, China in December 2019 and declared a global pandemic by the WHO in March 2020.
+
+## Transmission
+- Primarily spreads through respiratory droplets and aerosols from infected persons
+- Close contact (within 6 feet) with an infected person
+- Touching contaminated surfaces then touching face (less common)
+- Incubation period: 2–14 days (average 5–6 days)
+
+## Symptoms
+**Mild to Moderate:**
+- Fever or chills
+- Cough (usually dry)
+- Fatigue
+- Muscle or body aches
+- Headache
+- Loss of taste or smell (anosmia/ageusia)
+- Sore throat
+- Runny nose
+- Nausea or vomiting
+- Diarrhea
+
+**Severe:**
+- Difficulty breathing or shortness of breath
+- Persistent chest pain or pressure
+- Confusion or inability to stay awake
+- Pale, gray, or blue-colored skin, lips, or nail beds
 
 ## Diagnosis
-Diagnosis of COVID-19 typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- RT-PCR (Reverse Transcription Polymerase Chain Reaction) — gold standard
+- Rapid antigen tests
+- Chest CT scan showing ground-glass opacities
+- Blood tests (CBC, CRP, D-dimer, ferritin)
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Mild cases**: Rest, hydration, fever reducers (acetaminophen/ibuprofen)
+- **Antivirals**: Nirmatrelvir/ritonavir (Paxlovid), remdesivir for hospitalized patients
+- **Severe cases**: Supplemental oxygen, corticosteroids (dexamethasone), mechanical ventilation
+- **Monoclonal antibodies**: For high-risk patients
+
+## Prevention
+- Vaccination (mRNA vaccines: Pfizer-BioNTech, Moderna; viral vector: Johnson & Johnson)
+- Wearing masks in high-risk settings
+- Hand hygiene (washing with soap for 20 seconds)
+- Physical distancing
+- Ventilation of indoor spaces
+- Isolation when infected
+
+## Long COVID
+Some patients experience persistent symptoms for weeks or months after acute infection:
+- Fatigue, brain fog, shortness of breath, joint pain, depression
+- Affects approximately 10–30% of infected individuals

@@ -1,10 +1,56 @@
 # Cancer
 
 ## Overview
-A disease caused by an uncontrolled division of abnormal cells in a part of the body. Treatments include chemotherapy, radiation, and surgery.
+Cancer is a group of diseases characterized by uncontrolled growth and spread of abnormal cells. If the spread is not controlled, it can result in death. Cancer can arise in almost any organ or tissue of the body.
+
+## Types
+- **Carcinoma**: Cancer of epithelial cells (skin, lung, breast, colon, prostate) — most common
+- **Sarcoma**: Cancer of connective tissue (bone, muscle, fat, cartilage)
+- **Leukemia**: Cancer of blood-forming tissues (bone marrow)
+- **Lymphoma**: Cancer of the lymphatic system (Hodgkin's and Non-Hodgkin's)
+- **Melanoma**: Cancer of melanocytes (pigment-producing skin cells)
+- **Brain and spinal cord tumors**: Gliomas, meningiomas
+
+## Risk Factors
+- **Modifiable**: Tobacco use (leading cause), alcohol, obesity, physical inactivity, unhealthy diet, UV radiation, certain infections (HPV, H. pylori, Hepatitis B/C)
+- **Non-modifiable**: Age, genetics/family history, gender, race/ethnicity
+
+## Warning Signs (CAUTION)
+- **C**hange in bowel or bladder habits
+- **A** sore that does not heal
+- **U**nusual bleeding or discharge
+- **T**hickening or lump in breast or elsewhere
+- **I**ndigestion or difficulty swallowing
+- **O**bvious change in a wart or mole
+- **N**agging cough or hoarseness
 
 ## Diagnosis
-Diagnosis of Cancer typically involves clinical assessment, patient history, and specific laboratory tests or imaging. Early detection is crucial for effective management.
+- **Biopsy**: Definitive diagnosis; tissue sample examined under microscope
+- **Imaging**: X-ray, CT scan, MRI, PET scan, ultrasound
+- **Blood tests**: CBC, tumor markers (PSA, CA-125, CEA, AFP)
+- **Endoscopy**: Direct visualization of internal organs
+- **Genetic testing**: BRCA1/2 mutations for breast/ovarian cancer
+
+## Staging
+- **Stage I**: Localized, small tumor
+- **Stage II**: Larger tumor, may have spread to nearby lymph nodes
+- **Stage III**: Spread to nearby tissues and lymph nodes
+- **Stage IV**: Metastatic — spread to distant organs
 
 ## Treatment
-Treatment options vary depending on the severity but generally aim to manage symptoms and improve the patient's quality of life. Patients should consult healthcare providers for tailored treatment plans.
+- **Surgery**: Removal of tumor; curative for localized cancers
+- **Radiation therapy**: High-energy rays to kill cancer cells
+- **Chemotherapy**: Drugs that kill rapidly dividing cells
+- **Immunotherapy**: Boosts immune system to fight cancer (checkpoint inhibitors, CAR-T cell therapy)
+- **Targeted therapy**: Drugs targeting specific cancer cell mutations (imatinib for CML, trastuzumab for HER2+ breast cancer)
+- **Hormone therapy**: For hormone-sensitive cancers (breast, prostate)
+- **Bone marrow/stem cell transplant**: For leukemia and lymphoma
+
+## Prevention
+- Avoid tobacco and alcohol
+- Maintain healthy weight
+- Regular physical activity
+- Healthy diet (fruits, vegetables, whole grains)
+- Sun protection (sunscreen, protective clothing)
+- Vaccinations (HPV vaccine, Hepatitis B vaccine)
+- Regular cancer screenings (mammogram, colonoscopy, Pap smear, PSA test)
