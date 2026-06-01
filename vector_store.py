@@ -1,4 +1,4 @@
-"""ChromaDB vector store — HuggingFace Inference API embeddings (free), chromadb 0.5.3."""
+"""ChromaDB vector store — local HuggingFace embeddings, chromadb 0.5.3."""
 import logging
 import os
 from typing import List, Optional, Tuple
@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple
 import chromadb
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from config import config
 from retrieval import BM25Index
@@ -14,15 +14,12 @@ from retrieval import BM25Index
 logger = logging.getLogger(__name__)
 
 
-def _get_embeddings() -> HuggingFaceInferenceAPIEmbeddings:
-    """
-    Free embeddings via HuggingFace Inference API.
-    Uses all-MiniLM-L6-v2 — no local model, pure HTTP, no quota issues.
-    HF_TOKEN is optional for free tier (works without token too).
-    """
-    return HuggingFaceInferenceAPIEmbeddings(
-        api_key=os.environ.get("HF_TOKEN", "hf_dummy"),
-        model_name="sentence-transformers/all-MiniLM-L6-v2",
+def _get_embeddings() -> HuggingFaceEmbeddings:
+    """Local sentence-transformers embeddings — no API call, no quota, works offline."""
+    return HuggingFaceEmbeddings(
+        model_name="all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True},
     )
 
 
